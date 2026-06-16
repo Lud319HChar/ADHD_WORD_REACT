@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ADHD CET6 极速反应训练系统 V2</title>
+    <link rel="stylesheet" href="css/main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+</head>
+<body>
+    <div id="header">
+        <div id="mode-speed-indicator">MODE: 1 | SPEED: 1X</div>
+        <div id="combo-container" class="combo-low">COMBO 0</div>
+        <div id="status-indicator">IDLE</div>
+    </div>
+
+    <div id="main-stage">
+        <div id="start-hint" style="font-size: 2rem; color: #555;">按 [ SPACE ] 开始训练</div>
+        <div id="word-display" style="display: none;"></div>
+        <div id="phonetic-display" style="display: none;"></div>
+        <div id="meaning-display"></div>
+        <div id="example-display"></div>
+    </div>
+
+    <div id="unfamiliar-indicator">不熟</div>
+
+    <div id="mobile-controls" class="mobile-controls">
+        <div class="mobile-row">
+            <button class="mobile-btn mobile-btn-know" ontouchstart="handleMobileBtn('K')" onclick="handleMobileBtn('K')">知道 (K)</button>
+            <button class="mobile-btn mobile-btn-space" ontouchstart="handleMobileBtn('SPACE')" onclick="handleMobileBtn('SPACE')">空格 (SPACE)</button>
+            <button class="mobile-btn mobile-btn-unfamiliar" ontouchstart="handleMobileBtn('J')" onclick="handleMobileBtn('J')">不熟 (J)</button>
+        </div>
+        <div class="mobile-row">
+            <button class="mobile-btn mobile-btn-speed" onclick="handleMobileBtn('1')">1X</button>
+            <button class="mobile-btn mobile-btn-speed" onclick="handleMobileBtn('2')">2X</button>
+            <button class="mobile-btn mobile-btn-speed" onclick="handleMobileBtn('3')">3X</button>
+            <button class="mobile-btn mobile-btn-speed" onclick="handleMobileBtn('5')">5X</button>
+        </div>
+        <div class="mobile-row">
+            <button class="mobile-btn mobile-btn-mode" onclick="handleMobileBtn('M')">模式 (M)</button>
+            <button class="mobile-btn mobile-btn-history" onclick="handleMobileBtn('W')">历史 (W)</button>
+            <button class="mobile-btn mobile-btn-library" onclick="handleMobileBtn('L')">词库 (L)</button>
+            <button class="mobile-btn mobile-btn-unfamiliar" onclick="handleMobileBtn('U')">不熟 (U)</button>
+        </div>
+    </div>
+
+    <div id="footer">
+        <div><span class="key-hint">SPACE</span> 开始/继续 <span class="key-hint">K</span> 知道 <span class="key-hint">J</span> 不熟 <span class="key-hint">A/D</span> 历史漫游</div>
+        <div id="stats-board">今日: 0 | 知道: 0 | 不熟: 0</div>
+        <div><span class="key-hint">1/2/3/5</span> 速度调节 <span class="key-hint">L</span> 词库 <span class="key-hint">M</span> 模式 <span class="key-hint">W</span> 历史 <span class="key-hint">U</span> 不熟词库</div>
+    </div>
+
+    <div id="fill-blank-container" style="display: none;">
+        <div id="fill-blank-sentence" style="font-size: 2rem; margin-bottom: 20px; min-height: 60px;"></div>
+        <div id="fill-blank-options" style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;"></div>
+        <div id="fill-blank-feedback" style="font-size: 1.5rem; margin-top: 20px; opacity: 0; transition: opacity 0.3s;"></div>
+    </div>
+
+    <div id="history-panel">
+        <div id="history-header">
+            <div id="history-title">训练历史 (按 W 隐藏)</div>
+            <div id="close-history" onclick="toggleHistoryPanel()">关闭</div>
+        </div>
+        <div id="history-scroll"></div>
+    </div>
+
+    <div id="unfamiliar-library-modal">
+        <div id="unfamiliar-library-content">
+            <div id="unfamiliar-library-header">
+                <div id="unfamiliar-library-title">不熟词库</div>
+                <div id="close-unfamiliar-library" onclick="closeUnfamiliarLibrary()">关闭</div>
+            </div>
+            <div id="unfamiliar-library-grid"></div>
+        </div>
+    </div>
+
+    <div id="word-library-modal">
+        <div id="word-library-content">
+            <div id="word-library-top">
+                <div id="word-library-header">
+                    <div id="word-library-title">CET6 高频词库</div>
+                    <div id="close-library" onclick="closeWordLibrary()">关闭</div>
+                </div>
+                <div id="stats-summary">
+                    <div class="stat-item"><span class="stat-value" id="total-count">0</span><span class="stat-label">总词汇</span></div>
+                    <div class="stat-item"><span class="stat-value" id="noun-count">0</span><span class="stat-label">名词</span></div>
+                    <div class="stat-item"><span class="stat-value" id="verb-count">0</span><span class="stat-label">动词</span></div>
+                    <div class="stat-item"><span class="stat-value" id="adj-count">0</span><span class="stat-label">形容词</span></div>
+                    <div class="stat-item"><span class="stat-value" id="adv-count">0</span><span class="stat-label">副词</span></div>
+                </div>
+                <div id="category-filters">
+                    <button class="filter-btn active" onclick="filterWords('all')">全部</button>
+                    <button class="filter-btn" onclick="filterWords('noun')">名词</button>
+                    <button class="filter-btn" onclick="filterWords('verb')">动词</button>
+                    <button class="filter-btn" onclick="filterWords('adjective')">形容词</button>
+                    <button class="filter-btn" onclick="filterWords('adverb')">副词</button>
+                    <button class="filter-btn" onclick="filterWords('preposition')">介词</button>
+                    <button class="filter-btn" onclick="filterWords('academic')">学术</button>
+                    <button class="filter-btn" onclick="filterWords('daily')">生活</button>
+                    <button class="filter-btn" onclick="filterWords('technology')">科技</button>
+                    <button class="filter-btn" onclick="filterWords('economy')">经济</button>
+                    <button class="filter-btn" onclick="filterWords('society')">社会</button>
+                    <button class="filter-btn" onclick="filterWords('emotion')">情感</button>
+                    <button class="filter-btn" onclick="filterWords('basic')">基础</button>
+                    <button class="filter-btn" onclick="filterWords('intermediate')">进阶</button>
+                    <button class="filter-btn" onclick="filterWords('advanced')">高级</button>
+                </div>
+            </div>
+            <div id="word-library-scroll">
+                <div id="word-library-grid" class="word-library-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { loadProgress, loadUnfamiliarWords } from './js/storage.js';
+        import { handleKeyDown, handleMobileBtn, openWordLibrary, closeWordLibrary, openUnfamiliarLibrary, closeUnfamiliarLibrary, toggleHistoryPanel, filterWords } from './js/interaction.js';
+
+        loadProgress();
+        loadUnfamiliarWords();
+
+        window.addEventListener('keydown', handleKeyDown);
+
+        window.openWordLibrary = openWordLibrary;
+        window.closeWordLibrary = closeWordLibrary;
+        window.openUnfamiliarLibrary = openUnfamiliarLibrary;
+        window.closeUnfamiliarLibrary = closeUnfamiliarLibrary;
+        window.toggleHistoryPanel = toggleHistoryPanel;
+        window.filterWords = filterWords;
+        window.handleMobileBtn = handleMobileBtn;
+    </script>
+</body>
+</html>

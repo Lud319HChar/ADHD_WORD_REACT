@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CET6 训练仪表盘</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  :root {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --border: #334155;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #38bdf8;
+    --accent2: #a78bfa;
+    --green: #34d399;
+    --red: #f87171;
+    --orange: #fb923c;
+    --pink: #f472b6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 16px;
+  }
+
+  .header {
+    text-align: center;
+    padding: 12px 0 16px;
+  }
+  .header h1 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .header .status-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+    animation: pulse 2s infinite;
+  }
+  .header .status-dot.online { background: var(--green); }
+  .header .status-dot.offline { background: var(--red); animation: none; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 12px;
+    text-align: center;
+  }
+  .stat-card .label { font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; }
+  .stat-card .value { font-size: 1.8rem; font-weight: 700; }
+  .stat-card .value.know { color: var(--green); }
+  .stat-card .value.unfamiliar { color: var(--red); }
+  .stat-card .value.combo { color: var(--accent); }
+  .stat-card .value.total { color: var(--accent2); }
+  .stat-card .value.speed { color: var(--orange); }
+  .stat-card .value.mode { color: var(--pink); font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .progress-bar-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+  .progress-bar-wrap .title { font-size: 0.75rem; color: var(--muted); margin-bottom: 8px; }
+  .progress-bar {
+    height: 20px;
+    background: #1e293b;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+  }
+  .progress-bar .segment-know { background: var(--green); transition: width 0.5s; }
+  .progress-bar .segment-unfamiliar { background: var(--red); transition: width 0.5s; }
+  .progress-bar .segment-rest { background: #334155; transition: width 0.5s; }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+  .panel h3 {
+    font-size: 0.9rem;
+    color: var(--accent);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .combo-box {
+    text-align: center;
+    padding: 10px;
+  }
+  .combo-num {
+    font-size: 3rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--accent), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .combo-label { font-size: 0.7rem; color: var(--muted); }
+  .max-combo { font-size: 0.75rem; color: var(--orange); margin-top: 4px; }
+
+  .msg-box {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 8px;
+    max-height: 120px;
+    overflow-y: auto;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .msg-item {
+    padding: 4px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .msg-item:last-child { border-bottom: none; }
+  .msg-item .time { font-size: 0.65rem; color: var(--muted); }
+  .msg-item .from-tag {
+    display: inline-block;
+    font-size: 0.6rem;
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin-right: 4px;
+  }
+  .from-tag.phone { background: var(--pink); color: #fff; }
+  .from-tag.pc { background: var(--accent); color: #000; }
+
+  .input-row {
+    display: flex;
+    gap: 8px;
+  }
+  .input-row input {
+    flex: 1;
+    background: #0f172a;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    outline: none;
+  }
+  .input-row input:focus { border-color: var(--accent); }
+  .btn {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn:active { opacity: 0.8; }
+  .btn-sm {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    border-radius: 6px;
+  }
+
+  .quick-cmds {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .quick-cmd {
+    background: #334155;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .quick-cmd:active { background: var(--accent); color: #000; }
+
+  .sync-info {
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 8px;
+  }
+
+  .tip {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 6px;
+    text-align: center;
+  }
+
+  .no-server {
+    text-align: center;
+    padding: 30px 16px;
+    color: var(--muted);
+  }
+  .no-server .icon { font-size: 2rem; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>CET6 训练仪表盘</h1>
+  <div style="font-size:0.7rem;color:var(--muted);margin-top:4px;">
+    <span class="status-dot" id="status-dot"></span>
+    <span id="status-text">连接中...</span>
+  </div>
+</div>
+
+<div id="no-server-msg" class="no-server" style="display:none;">
+  <div class="icon">🔌</div>
+  <div>未连接到训练服务器</div>
+  <div class="tip">请先在电脑上启动 server.js<br><code>node server.js</code></div>
+</div>
+
+<div id="dashboard-content">
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="label">今日训练</div>
+      <div class="value total" id="stat-today">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">知道</div>
+      <div class="value know" id="stat-know">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">不熟</div>
+      <div class="value unfamiliar" id="stat-unfamiliar">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">掌握率</div>
+      <div class="value combo" id="stat-rate">0%</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">当前速度</div>
+      <div class="value speed" id="stat-speed">1X</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">当前模式</div>
+      <div class="value mode" id="stat-mode">-</div>
+    </div>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div class="title">训练进度</div>
+    <div class="progress-bar" id="progress-bar">
+      <div class="segment-know" id="seg-know" style="width:0%"></div>
+      <div class="segment-unfamiliar" id="seg-unfamiliar" style="width:0%"></div>
+      <div class="segment-rest" id="seg-rest" style="width:100%"></div>
+    </div>
+    <div class="progress-label">
+      <span>知道 <b id="lbl-know">0</b></span>
+      <span>不熟 <b id="lbl-unfamiliar">0</b></span>
+      <span>剩余 <b id="lbl-rest">0</b></span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>🔥 连击</h3>
+    <div class="combo-box">
+      <div class="combo-num" id="combo-num">0</div>
+      <div class="combo-label">当前连击</div>
+      <div class="max-combo">历史最高: <span id="max-combo">0</span></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>📨 发送指令到电脑</h3>
+    <div class="input-row">
+      <input type="text" id="msg-input" placeholder="输入指令或消息..." autocomplete="off">
+      <button class="btn" onclick="sendMessage()">发送</button>
+    </div>
+    <div class="quick-cmds">
+      <button class="quick-cmd" onclick="sendCommand('切换到 2X 速度')">切换到 2X</button>
+      <button class="quick-cmd" onclick="sendCommand('切换到 3X 速度')">切换到 3X</button>
+      <button class="quick-cmd" onclick="sendCommand('切换到自动播放模式')">自动播放</button>
+      <button class="quick-cmd" onclick="sendCommand('切换到极速反应模式')">极速反应</button>
+      <button class="quick-cmd" onclick="sendCommand('切换到填空模式')">填空模式</button>
+      <button class="quick-cmd" onclick="sendCommand('开始训练')">开始训练</button>
+      <button class="quick-cmd" onclick="sendCommand('暂停训练')">暂停训练</button>
+      <button class="quick-cmd" onclick="sendCommand('显示不熟词库')">不熟词库</button>
+      <button class="quick-cmd" onclick="sendCommand('查看历史')">查看历史</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>📋 最近消息</h3>
+    <div class="msg-box" id="msg-box">
+      <div style="color:var(--muted);text-align:center;">暂无消息</div>
+    </div>
+  </div>
+
+  <div class="sync-info" id="sync-info">等待首次同步...</div>
+
+  <div class="tip">
+    💡 电脑终端也可执行：<br>
+    <code>node -e "require('http').request({hostname:'localhost',port:3000,path:'/api/stats',method:'GET'},r=>{let d='';r.on('data',c=>d+=c);r.on('end',()=>console.log(JSON.parse(d)))})".end()</code>
+  </div>
+
+</div>
+
+<script>
+const STATS_URL = '/api/stats';
+const COMMAND_URL = '/api/command';
+const POLL_INTERVAL = 5000;
+const MODE_MAP = {
+    'speed_react': '⚡ 极速反应',
+    'auto_play': '🎵 自动播放',
+    'fill_blank': '📝 填空模式'
+};
+
+let msgList = [];
+let online = false;
+let prevStats = {};
+
+function showNoServer(show) {
+    document.getElementById('no-server-msg').style.display = show ? 'block' : 'none';
+    document.getElementById('dashboard-content').style.display = show ? 'none' : 'block';
+}
+
+async function fetchStats() {
+    try {
+        const res = await fetch(STATS_URL);
+        if (!res.ok) throw new Error('not ok');
+        const data = await res.json();
+        if (!online) { animateCardsEntrance(); }
+        online = true;
+        updateDashboard(data);
+        prevStats = data;
+    } catch (e) {
+        online = false;
+    }
+    updateStatus();
+}
+
+function animateCardsEntrance() {
+    if (typeof gsap === 'undefined') return;
+    gsap.from('.stat-card', {
+        opacity: 0, y: 25, scale: 0.95,
+        duration: 0.4, stagger: 0.06, ease: 'power2.out'
+    });
+    gsap.from('.panel', {
+        opacity: 0, y: 20,
+        duration: 0.35, stagger: 0.08, ease: 'power2.out', delay: 0.3
+    });
+    gsap.from('#progress-bar', {
+        scaleX: 0, transformOrigin: 'left center',
+        duration: 0.5, ease: 'power2.out', delay: 0.4
+    });
+}
+
+function animateNumber(el, val) {
+    if (typeof gsap === 'undefined') { el.textContent = val; return; }
+    const cur = parseInt(el.textContent) || 0;
+    gsap.fromTo(el, { textContent: cur }, {
+        textContent: val, duration: 0.5, snap: { textContent: 1 }, ease: 'power2.out'
+    });
+}
+
+function updateDashboard(d) {
+    animateNumber(document.getElementById('stat-today'), d.todayCount || 0);
+    animateNumber(document.getElementById('stat-know'), d.knowCount || 0);
+    animateNumber(document.getElementById('stat-unfamiliar'), d.unfamiliarCount || 0);
+
+    const rateEl = document.getElementById('stat-rate');
+    const rateVal = (d.masteryRate || 0) + '%';
+    if (rateEl.textContent !== rateVal) rateEl.textContent = rateVal;
+
+    document.getElementById('stat-speed').textContent = (d.currentSpeed || 1) + 'X';
+    document.getElementById('stat-mode').textContent = MODE_MAP[d.trainMode] || d.trainMode || '-';
+
+    const comboVal = d.combo || 0;
+    const comboEl = document.getElementById('combo-num');
+    if (parseInt(comboEl.textContent) !== comboVal) {
+        animateNumber(document.getElementById('combo-num'), comboVal);
+        if (typeof gsap !== 'undefined' && comboVal > 0) {
+            gsap.fromTo('#combo-num', { scale: 1.4 }, { scale: 1, duration: 0.3, ease: 'back.out(1.5)' });
+        }
+    }
+    document.getElementById('max-combo').textContent = d.maxCombo || 0;
+
+    const total = d.todayCount || 0;
+    const know = d.knowCount || 0;
+    const unfamiliar = d.unfamiliarCount || 0;
+    const rest = total ? total - know - unfamiliar : 0;
+
+    document.getElementById('lbl-know').textContent = know;
+    document.getElementById('lbl-unfamiliar').textContent = unfamiliar;
+    document.getElementById('lbl-rest').textContent = rest;
+
+    if (total > 0) {
+        const kw = (know / total * 100);
+        const uw = (unfamiliar / total * 100);
+        const rw = (rest / total * 100);
+        if (typeof gsap !== 'undefined') {
+            gsap.to('#seg-know', { width: kw + '%', duration: 0.5, ease: 'power2.out' });
+            gsap.to('#seg-unfamiliar', { width: uw + '%', duration: 0.5, ease: 'power2.out' });
+            gsap.to('#seg-rest', { width: rw + '%', duration: 0.5, ease: 'power2.out' });
+        } else {
+            document.getElementById('seg-know').style.width = kw + '%';
+            document.getElementById('seg-unfamiliar').style.width = uw + '%';
+            document.getElementById('seg-rest').style.width = rw + '%';
+        }
+    }
+
+    if (d.lastSync) {
+        const t = new Date(d.lastSync);
+        document.getElementById('sync-info').textContent = '上次同步: ' + t.toLocaleTimeString() + (d.lastSyncFrom ? ' (' + d.lastSyncFrom + ')' : '');
+    }
+}
+
+function updateStatus() {
+    const dot = document.getElementById('status-dot');
+    const txt = document.getElementById('status-text');
+    if (online) {
+        dot.className = 'status-dot online';
+        txt.textContent = '已连接';
+        showNoServer(false);
+    } else {
+        dot.className = 'status-dot offline';
+        txt.textContent = '未连接 - 请启动 server.js';
+    }
+}
+
+async function fetchCommands() {
+    try {
+        const res = await fetch(COMMAND_URL);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.commands && data.commands.length > 0) {
+            const maxId = Math.max(...data.commands.map(c => c.id));
+            msgList = [...msgList, ...data.commands].slice(-30);
+            renderMessages();
+            fetch('/api/command/ack', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ lastSeenId: maxId })
+            }).catch(() => {});
+        }
+    } catch (e) {}
+}
+
+function renderMessages() {
+    const box = document.getElementById('msg-box');
+    if (msgList.length === 0) {
+        box.innerHTML = '<div style="color:var(--muted);text-align:center;">暂无消息</div>';
+        return;
+    }
+    box.innerHTML = msgList.slice().reverse().map(m => {
+        const t = new Date(m.timestamp);
+        return `<div class="msg-item">
+            <span class="from-tag ${m.from || 'phone'}">${m.from || 'phone'}</span>
+            ${escapeHtml(m.content)}
+            <span class="time">${t.toLocaleTimeString()}</span>
+        </div>`;
+    }).join('');
+    box.scrollTop = box.scrollHeight;
+}
+
+function escapeHtml(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+}
+
+async function sendMessage() {
+    const input = document.getElementById('msg-input');
+    const content = input.value.trim();
+    if (!content) return;
+    input.value = '';
+    await sendCommand(content);
+}
+
+async function sendCommand(content) {
+    try {
+        const res = await fetch(COMMAND_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'message', content, from: 'phone' })
+        });
+        if (res.ok) {
+            const data = await res.json();
+            msgList.push({
+                id: data.id,
+                type: 'message',
+                content,
+                from: 'phone',
+                timestamp: new Date().toISOString()
+            });
+            if (msgList.length > 30) msgList = msgList.slice(-30);
+            renderMessages();
+        }
+    } catch (e) {}
+}
+
+window.sendCommand = sendCommand;
+window.sendMessage = sendMessage;
+
+fetchStats().then(() => {
+    if (!online) showNoServer(true);
+});
+
+setInterval(fetchStats, POLL_INTERVAL);
+setInterval(fetchCommands, POLL_INTERVAL);
+</script>
+
+</body>
+</html>

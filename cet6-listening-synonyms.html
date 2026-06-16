@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CET-6 听力同义替换词库 — 听力原文 ↔ 答案选项</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --border: #334155;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #38bdf8;
+    --accent2: #a78bfa;
+    --accent3: #34d399;
+    --accent4: #f472b6;
+    --accent5: #fb923c;
+    --verb: #ef4444;
+    --noun: #3b82f6;
+    --adj: #10b981;
+    --adv: #f59e0b;
+    --phrase: #f472b6;
+    --sentence: #a78bfa;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  .header {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #1a1a2e 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 24px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  .header h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .header p { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 20px 16px; }
+
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;
+    justify-content: center;
+  }
+  .legend-item {
+    padding: 4px 14px; border-radius: 20px; font-size: 0.78rem;
+    font-weight: 600; border: 1px solid;
+  }
+  .legend-verb { color: var(--verb); border-color: var(--verb); }
+  .legend-noun { color: var(--noun); border-color: var(--noun); }
+  .legend-adj { color: var(--adj); border-color: var(--adj); }
+  .legend-adv { color: var(--adv); border-color: var(--adv); }
+  .legend-phrase { color: var(--phrase); border-color: var(--phrase); }
+  .legend-sentence { color: var(--sentence); border-color: var(--sentence); }
+
+  .toc {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px;
+    justify-content: center;
+  }
+  .toc a {
+    color: var(--accent); text-decoration: none; padding: 6px 16px;
+    border: 1px solid var(--border); border-radius: 20px;
+    font-size: 0.82rem; transition: all 0.2s;
+  }
+  .toc a:hover { background: var(--accent); color: #000; border-color: var(--accent); }
+
+  .section {
+    margin-bottom: 32px;
+  }
+  .section-title {
+    font-size: 1.25rem; font-weight: 700; margin-bottom: 16px;
+    padding-bottom: 8px; border-bottom: 2px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title .badge {
+    font-size: 0.7rem; padding: 2px 10px; border-radius: 12px;
+    font-weight: 600;
+  }
+  .badge-verb { background: rgba(239,68,68,0.2); color: var(--verb); }
+  .badge-noun { background: rgba(59,130,246,0.2); color: var(--noun); }
+  .badge-adj { background: rgba(16,185,129,0.2); color: var(--adj); }
+  .badge-phrase { background: rgba(244,114,182,0.2); color: var(--phrase); }
+  .badge-sent { background: rgba(167,139,250,0.2); color: var(--sentence); }
+
+  .sub-section { margin-bottom: 20px; }
+  .sub-title {
+    font-size: 0.95rem; font-weight: 600; color: var(--muted);
+    margin-bottom: 10px; padding-left: 6px;
+    border-left: 3px solid var(--accent);
+  }
+
+  table {
+    width: 100%; border-collapse: collapse; font-size: 0.85rem;
+  }
+  thead th {
+    text-align: left; padding: 10px 12px;
+    background: rgba(255,255,255,0.04);
+    border-bottom: 2px solid var(--border);
+    font-weight: 600; font-size: 0.78rem; color: var(--muted);
+    position: sticky; top: 0;
+  }
+  tbody td {
+    padding: 9px 12px; border-bottom: 1px solid rgba(255,255,255,0.05);
+    vertical-align: top;
+  }
+  tbody tr:hover { background: rgba(255,255,255,0.03); }
+  .col-orig { width: 22%; color: #fbbf24; font-weight: 600; }
+  .col-arrow { width: 3%; color: var(--muted); text-align: center; }
+  .col-repl { width: 40%; }
+  .col-note { width: 35%; color: var(--muted); font-size: 0.78rem; }
+
+  .syn-tag {
+    display: inline-block; background: rgba(56,189,248,0.12);
+    color: var(--accent); padding: 1px 8px; border-radius: 10px;
+    margin: 2px 3px; font-size: 0.8rem;
+  }
+  .syn-tag-verb { background: rgba(239,68,68,0.12); color: var(--verb); }
+  .syn-tag-noun { background: rgba(59,130,246,0.12); color: var(--noun); }
+  .syn-tag-adj { background: rgba(16,185,129,0.12); color: var(--adj); }
+  .syn-tag-adv { background: rgba(245,158,11,0.12); color: var(--adv); }
+
+  .note-box {
+    background: rgba(56,189,248,0.06); border: 1px solid rgba(56,189,248,0.2);
+    border-radius: 10px; padding: 14px 18px; margin: 16px 0;
+    font-size: 0.82rem; color: var(--muted);
+  }
+  .note-box strong { color: var(--accent); }
+
+  .intro-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px 24px; margin-bottom: 24px;
+  }
+  .intro-card h2 { font-size: 1.1rem; color: var(--accent2); margin-bottom: 10px; }
+  .intro-card ul { padding-left: 20px; font-size: 0.85rem; color: var(--muted); line-height: 1.8; }
+  .intro-card ul li { margin-bottom: 4px; }
+
+  .footer {
+    text-align: center; padding: 24px; color: var(--muted);
+    font-size: 0.75rem; border-top: 1px solid var(--border); margin-top: 20px;
+  }
+
+  .count-badge {
+    display: inline-block; background: rgba(255,255,255,0.06);
+    padding: 2px 8px; border-radius: 8px; font-size: 0.7rem;
+    color: var(--muted); margin-left: 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🎧 CET-6 听力同义替换词库</h1>
+  <p>听力原文表达 ↔ 答案选项替换 | 基于2021-2025年六级真题整理</p>
+</div>
+
+<div class="container">
+
+  <!-- ====== 图例 ====== -->
+  <div class="legend">
+    <span class="legend-item legend-verb">🔴 动词</span>
+    <span class="legend-item legend-noun">🔵 名词</span>
+    <span class="legend-item legend-adj">🟢 形容词</span>
+    <span class="legend-item legend-adv">🟡 副词</span>
+    <span class="legend-item legend-phrase">🩷 短语</span>
+    <span class="legend-item legend-sentence">🟣 句式转换</span>
+  </div>
+
+  <!-- ====== 目录 ====== -->
+  <div class="toc">
+    <a href="#sec-intro">📋 概述</a>
+    <a href="#sec-verb">🔴 动词</a>
+    <a href="#sec-noun">🔵 名词</a>
+    <a href="#sec-adj">🟢 形容词</a>
+    <a href="#sec-adv">🟡 副词</a>
+    <a href="#sec-phrase">🩷 短语</a>
+    <a href="#sec-sentence">🟣 句式转换</a>
+    <a href="#sec-scene">🏷️ 场景分类</a>
+  </div>
+
+  <!-- ====== 概述 ====== -->
+  <div id="sec-intro" class="intro-card">
+    <h2>📋 使用说明</h2>
+    <ul>
+      <li><strong>来源：</strong>本词库综合整理自2021-2025年六级听力真题（新东方、CSDN、B站等平台的真题解析），涵盖长对话、短文理解、新闻报道三种题型。</li>
+      <li><strong>核心逻辑：</strong>六级听力答案选项几乎不直接出现听力原文原词，而是通过<strong>同义词替换、词性转换、句式变换</strong>来改写。识别这些替换关系是答对题目的关键。</li>
+      <li><strong>排列方式：</strong><span style="color:#fbbf24">原文高频词</span> → 选项中的替换词，附真题语境说明。</li>
+      <li><strong>四大替换模型：</strong>①词性转换（名词↔动词↔形容词） ②近义词替换 ③短语替换 ④句式转换/语义概括</li>
+    </ul>
+  </div>
+
+  <!-- ================================================================================== -->
+  <!-- ====== 一、动词类同义替换（最高频，占比约40%） ====== -->
+  <!-- ================================================================================== -->
+  <div id="sec-verb" class="section">
+    <div class="section-title">
+      🔴 一、动词类同义替换 <span class="badge badge-verb">最高频 · 占比40%</span>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">1.1 表示"认为、主张"</div>
+      <table>
+        <thead><tr><th>原文表达</th><th class="col-arrow"></th><th>选项替换词</th><th>真题语境 / 备注</th></tr></thead>
+        <tbody>
+          <tr><td class="col-orig">think</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">believe</span><span class="syn-tag syn-tag-verb">consider</span><span class="syn-tag syn-tag-verb">regard</span><span class="syn-tag syn-tag-verb">hold</span><span class="syn-tag syn-tag-verb">argue</span><span class="syn-tag syn-tag-verb">maintain</span><span class="syn-tag syn-tag-verb">claim</span><span class="syn-tag syn-tag-verb">contend</span></td><td class="col-note">hold the opinion/view that 是听力中极常见的观点引出句式</td></tr>
+          <tr><td class="col-orig">I think</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">in my opinion</span><span class="syn-tag syn-tag-verb">from my perspective</span><span class="syn-tag syn-tag-verb">as far as I'm concerned</span></td><td class="col-note">口语化 → 书面化的转换，长对话常见</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">1.2 表示"需要、要求"</div>
+      <table>
+        <thead><tr><th>原文表达</th><th class="col-arrow"></th><th>选项替换词</th><th>真题语境 / 备注</th></tr></thead>
+        <tbody>
+          <tr><td class="col-orig">need</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">require</span><span class="syn-tag syn-tag-verb">demand</span><span class="syn-tag syn-tag-verb">be in need of</span><span class="syn-tag syn-tag-verb">call for</span><span class="syn-tag syn-tag-verb">necessitate</span></td><td class="col-note">require更正式，demand语气更强</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">1.3 表示"帮助、支持"</div>
+      <table>
+        <thead><tr><th>原文表达</th><th class="col-arrow"></th><th>选项替换词</th><th>真题语境 / 备注</th></tr></thead>
+        <tbody>
+          <tr><td class="col-orig">help</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">assist</span><span class="syn-tag syn-tag-verb">aid</span><span class="syn-tag syn-tag-verb">support</span><span class="syn-tag syn-tag-verb">give a hand</span><span class="syn-tag syn-tag-verb">contribute to</span></td><td class="col-note">"assist"比"help"正式，短文理解中常见</td></tr>
+          <tr><td class="col-orig">support</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">back</span><span class="syn-tag syn-tag-verb">endorse</span><span class="syn-tag syn-tag-verb">advocate</span><span class="syn-tag syn-tag-verb">uphold</span></td><td class="col-note">endorse多用于"支持观点/政策"</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">1.4 表示"开始/结束"</div>
+      <table>
+        <thead><tr><th>原文表达</th><th class="col-arrow"></th><th>选项替换词</th><th>真题语境 / 备注</th></tr></thead>
+        <tbody>
+          <tr><td class="col-orig">start / begin</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">commence</span><span class="syn-tag syn-tag-verb">initiate</span><span class="syn-tag syn-tag-verb">launch</span><span class="syn-tag syn-tag-verb">set out</span><span class="syn-tag syn-tag-verb">kick off</span></td><td class="col-note">commence最正式，launch多用于"启动项目/产品"</td></tr>
+          <tr><td class="col-orig">end / finish</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">complete</span><span class="syn-tag syn-tag-verb">conclude</span><span class="syn-tag syn-tag-verb">accomplish</span><span class="syn-tag syn-tag-verb">terminate</span><span class="syn-tag syn-tag-verb">wrap up</span></td><td class="col-note">accomplish强调"成功完成"，terminate偏"终止"</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">1.5 表示"决定、计划"</div>
+      <table>
+        <thead><tr><th>原文表达</th><th class="col-arrow"></th><th>选项替换词</th><th>真题语境 / 备注</th></tr></thead>
+        <tbody>
+          <tr><td class="col-orig">decide</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">determine</span><span class="syn-tag syn-tag-verb">make a decision</span><span class="syn-tag syn-tag-verb">resolve</span><span class="syn-tag syn-tag-verb">make up one's mind</span></td><td class="col-note">determine也含"查明、测定"之意</td></tr>
+          <tr><td class="col-orig">plan</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">intend</span><span class="syn-tag syn-tag-verb">aim to</span><span class="syn-tag syn-tag-verb">make a plan for</span><span class="syn-tag syn-tag-verb">propose</span><span class="syn-tag syn-tag-verb">scheme</span></td><td class="col-note">intend / aim to 在对话中高频出现</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">1.6 表示"解释、说明"</div>
+      <table>
+        <thead><tr><th>原文表达</th><th class="col-arrow"></th><th>选项替换词</th><th>真题语境 / 备注</th></tr></thead>
+        <tbody>
+          <tr><td class="col-orig">explain</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">clarify</span><span class="syn-tag syn-tag-verb">describe</span><span class="syn-tag syn-tag-verb">illustrate</span><span class="syn-tag syn-tag-verb">elaborate</span><span class="syn-tag syn-tag-verb">interpret</span></td><td class="col-note">clarify强调"澄清"，illustrate表"用例子说明"</td></tr>
+          <tr><td class="col-orig">point out</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">indicate</span><span class="syn-tag syn-tag-verb">highlight</span><span class="syn-tag syn-tag-verb">note</span><span class="syn-tag syn-tag-verb">mention</span></td><td class="col-note">highlight = 强调/突出</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">1.7 表示"建议、推荐"</div>
+      <table>
+        <thead><tr><th>原文表达</th><th class="col-arrow"></th><th>选项替换词</th><th>真题语境 / 备注</th></tr></thead>
+        <tbody>
+          <tr><td class="col-orig">suggest</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">recommend</span><span class="syn-tag syn-tag-verb">propose</span><span class="syn-tag syn-tag-verb">advise</span><span class="syn-tag syn-tag-verb">put forward</span></td><td class="col-note">suggest也常表"暗示"，需根据语境区分</td></tr>
+          <tr><td class="col-orig">come up with</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">propose</span><span class="syn-tag syn-tag-verb">put forward</span><span class="syn-tag syn-tag-verb">devise</span><span class="syn-tag syn-tag-verb">suggest</span></td><td class="col-note">想出（方案/主意）</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">1.8 表示"解决、处理"</div>
+      <table>
+        <thead><tr><th>原文表达</th><th class="col-arrow"></th><th>选项替换词</th><th>真题语境 / 备注</th></tr></thead>
+        <tbody>
+          <tr><td class="col-orig">solve</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">resolve</span><span class="syn-tag syn-tag-verb">address</span><span class="syn-tag syn-tag-verb">tackle</span><span class="syn-tag syn-tag-verb">handle</span><span class="syn-tag syn-tag-verb">deal with</span><span class="syn-tag syn-tag-verb">find a solution to</span></td><td class="col-note">address作"处理"是六级高频考点</td></tr>
+          <tr><td class="col-orig">deal with</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">cope with</span><span class="syn-tag syn-tag-verb">handle</span><span class="syn-tag syn-tag-verb">tackle</span><span class="syn-tag syn-tag-verb">address</span></td><td class="col-note">cope with强调"应对困难"</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">1.9 表示"增减变化"</div>
+      <table>
+        <thead><tr><th>原文表达</th><th class="col-arrow"></th><th>选项替换词</th><th>真题语境 / 备注</th></tr></thead>
+        <tbody>
+          <tr><td class="col-orig">increase / go up</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">rise</span><span class="syn-tag syn-tag-verb">grow</span><span class="syn-tag syn-tag-verb">expand</span><span class="syn-tag syn-tag-verb">boost</span><span class="syn-tag syn-tag-verb">enhance</span><span class="syn-tag syn-tag-verb">soar</span><span class="syn-tag syn-tag-verb">climb</span></td><td class="col-note">soar = 飙升，数据类短文高频</td></tr>
+          <tr><td class="col-orig">decrease / go down</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">reduce</span><span class="syn-tag syn-tag-verb">drop</span><span class="syn-tag syn-tag-verb">decline</span><span class="syn-tag syn-tag-verb">fall</span><span class="syn-tag syn-tag-verb">diminish</span><span class="syn-tag syn-tag-verb">shrink</span><span class="syn-tag syn-tag-verb">plummet</span></td><td class="col-note">plummet = 骤降，diminish偏"逐渐减少"</td></tr>
+          <tr><td class="col-orig">improve</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">enhance</span><span class="syn-tag syn-tag-verb">strengthen</span><span class="syn-tag syn-tag-verb">boost</span><span class="syn-tag syn-tag-verb">upgrade</span><span class="syn-tag syn-tag-verb">optimize</span></td><td class="col-note">enhance体验/效率，boost信心/经济</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">1.10 表示"引起、导致"</div>
+      <table>
+        <thead><tr><th>原文表达</th><th class="col-arrow"></th><th>选项替换词</th><th>真题语境 / 备注</th></tr></thead>
+        <tbody>
+          <tr><td class="col-orig">cause / lead to</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">result in</span><span class="syn-tag syn-tag-verb">bring about</span><span class="syn-tag syn-tag-verb">give rise to</span><span class="syn-tag syn-tag-verb">trigger</span><span class="syn-tag syn-tag-verb">contribute to</span></td><td class="col-note">contribute to不含负面含义，只是"促成"</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">1.11 其他高频动词替换</div>
+      <table>
+        <thead><tr><th>原文表达</th><th class="col-arrow"></th><th>选项替换词</th><th>真题语境 / 备注</th></tr></thead>
+        <tbody>
+          <tr><td class="col-orig">buy</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">purchase</span><span class="syn-tag syn-tag-verb">get</span><span class="syn-tag syn-tag-verb">acquire</span><span class="syn-tag syn-tag-verb">obtain</span></td><td class="col-note">purchase更正式，如"purchase household items"</td></tr>
+          <tr><td class="col-orig">use</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">utilize</span><span class="syn-tag syn-tag-verb">employ</span><span class="syn-tag syn-tag-verb">apply</span><span class="syn-tag syn-tag-verb">exploit</span><span class="syn-tag syn-tag-verb">make use of</span></td><td class="col-note">utilize偏"有效利用"，exploit有时含"剥削"</td></tr>
+          <tr><td class="col-orig">get / obtain</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">acquire</span><span class="syn-tag syn-tag-verb">gain</span><span class="syn-tag syn-tag-verb">achieve</span><span class="syn-tag syn-tag-verb">attain</span></td><td class="col-note">acquire knowledge/skills 是固定搭配</td></tr>
+          <tr><td class="col-orig">give up</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">abandon</span><span class="syn-tag syn-tag-verb">quit</span><span class="syn-tag syn-tag-verb">drop</span><span class="syn-tag syn-tag-verb">surrender</span></td><td class="col-note">abandon在真题中出现6次以上</td></tr>
+          <tr><td class="col-orig">cancel</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">call off</span><span class="syn-tag syn-tag-verb">abolish</span><span class="syn-tag syn-tag-verb">terminate</span><span class="syn-tag syn-tag-verb">scrap</span></td><td class="col-note">call off多用于"取消活动/会议"</td></tr>
+          <tr><td class="col-orig">change</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">alter</span><span class="syn-tag syn-tag-verb">modify</span><span class="syn-tag syn-tag-verb">transform</span><span class="syn-tag syn-tag-verb">convert</span><span class="syn-tag syn-tag-verb">shift</span><span class="syn-tag syn-tag-verb">adjust</span></td><td class="col-note">adjust偏"微调"，transform偏"彻底改变"</td></tr>
+          <tr><td class="col-orig">allow</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">permit</span><span class="syn-tag syn-tag-verb">enable</span><span class="syn-tag syn-tag-verb">authorize</span></td><td class="col-note">enable sb to do 是高频考点</td></tr>
+          <tr><td class="col-orig">prohibit / ban</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">forbid</span><span class="syn-tag syn-tag-verb">outlaw</span><span class="syn-tag syn-tag-verb">restrict</span><span class="syn-tag syn-tag-verb">bar</span></td><td class="col-note">outlaw偏"宣布违法"</td></tr>
+          <tr><td class="col-orig">produce</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">generate</span><span class="syn-tag syn-tag-verb">create</span><span class="syn-tag syn-tag-verb">manufacture</span><span class="syn-tag syn-tag-verb">yield</span></td><td class="col-note">generate revenue/interest常见搭配</td></tr>
+          <tr><td class="col-orig">show / display</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">demonstrate</span><span class="syn-tag syn-tag-verb">exhibit</span><span class="syn-tag syn-tag-verb">reveal</span><span class="syn-tag syn-tag-verb">indicate</span><span class="syn-tag syn-tag-verb">present</span></td><td class="col-note">reveal偏"揭示隐藏信息"</td></tr>
+          <tr><td class="col-orig">focus on</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">concentrate on</span><span class="syn-tag syn-tag-verb">pay attention to</span><span class="syn-tag syn-tag-verb">emphasize</span></td><td class="col-note">关注/强调</td></tr>
+          <tr><td class="col-orig">analyze</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">evaluate</span><span class="syn-tag syn-tag-verb">study</span><span class="syn-tag syn-tag-verb">examine</span><span class="syn-tag syn-tag-verb">assess</span><span class="syn-tag syn-tag-verb">investigate</span></td><td class="col-note">evaluate偏"评估价值/效果"</td></tr>
+          <tr><td class="col-orig">communicate</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">convey</span><span class="syn-tag syn-tag-verb">transmit</span><span class="syn-tag syn-tag-verb">inform</span><span class="syn-tag syn-tag-verb">express</span></td><td class="col-note">convey偏"传达感受/信息"</td></tr>
+          <tr><td class="col-orig">find out</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">discover</span><span class="syn-tag syn-tag-verb">detect</span><span class="syn-tag syn-tag-verb">uncover</span><span class="syn-tag syn-tag-verb">identify</span></td><td class="col-note">detect偏"检测/察觉"</td></tr>
+          <tr><td class="col-orig">turn down</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">reject</span><span class="syn-tag syn-tag-verb">refuse</span><span class="syn-tag syn-tag-verb">decline</span></td><td class="col-note">decline更正式礼貌</td></tr>
+          <tr><td class="col-orig">look for</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">search for</span><span class="syn-tag syn-tag-verb">seek</span><span class="syn-tag syn-tag-verb">hunt for</span></td><td class="col-note">seek偏"寻求帮助/建议"</td></tr>
+          <tr><td class="col-orig">carry out</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">conduct</span><span class="syn-tag syn-tag-verb">perform</span><span class="syn-tag syn-tag-verb">implement</span><span class="syn-tag syn-tag-verb">execute</span></td><td class="col-note">conduct research/survey是常见搭配</td></tr>
+          <tr><td class="col-orig">set up</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">establish</span><span class="syn-tag syn-tag-verb">found</span><span class="syn-tag syn-tag-verb">build</span><span class="syn-tag syn-tag-verb">create</span></td><td class="col-note">establish organization/system</td></tr>
+          <tr><td class="col-orig">ensure / make sure</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">guarantee</span><span class="syn-tag syn-tag-verb">secure</span><span class="syn-tag syn-tag-verb">assure</span><span class="syn-tag syn-tag-verb">verify</span><span class="syn-tag syn-tag-verb">confirm</span></td><td class="col-note">guarantee语气最强，verify偏"核实"</td></tr>
+          <tr><td class="col-orig">discuss</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">talk about</span><span class="syn-tag syn-tag-verb">debate</span><span class="syn-tag syn-tag-verb">address</span><span class="syn-tag syn-tag-verb">negotiate</span></td><td class="col-note">negotiate = 协商/谈判</td></tr>
+          <tr><td class="col-orig">predict</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">forecast</span><span class="syn-tag syn-tag-verb">anticipate</span><span class="syn-tag syn-tag-verb">foresee</span></td><td class="col-note">anticipate还含"预期并准备"之意</td></tr>
+          <tr><td class="col-orig">promote</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">encourage</span><span class="syn-tag syn-tag-verb">foster</span><span class="syn-tag syn-tag-verb">boost</span><span class="syn-tag syn-tag-verb">facilitate</span></td><td class="col-note">facilitate = 促进/使便利</td></tr>
+          <tr><td class="col-orig">recruit</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">enroll</span><span class="syn-tag syn-tag-verb">enlist</span><span class="syn-tag syn-tag-verb">hire</span><span class="syn-tag syn-tag-verb">take on</span></td><td class="col-note">招聘/招收</td></tr>
+          <tr><td class="col-orig">proceed / continue</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">go on</span><span class="syn-tag syn-tag-verb">carry on</span><span class="syn-tag syn-tag-verb">move forward</span></td><td class="col-note">继续进行</td></tr>
+          <tr><td class="col-orig">maintain</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">keep</span><span class="syn-tag syn-tag-verb">preserve</span><span class="syn-tag syn-tag-verb">sustain</span><span class="syn-tag syn-tag-verb">retain</span></td><td class="col-note">preserve偏"保护/保存"</td></tr>
+          <tr><td class="col-orig">achieve</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">accomplish</span><span class="syn-tag syn-tag-verb">attain</span><span class="syn-tag syn-tag-verb">reach</span><span class="syn-tag syn-tag-verb">realize</span><span class="syn-tag syn-tag-verb">fulfill</span></td><td class="col-note">实现目标/梦想</td></tr>
+          <tr><td class="col-orig">emphasize / stress</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">highlight</span><span class="syn-tag syn-tag-verb">underline</span><span class="syn-tag syn-tag-verb">underscore</span></td><td class="col-note">强调</td></tr>
+          <tr><td class="col-orig">work out</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">figure out</span><span class="syn-tag syn-tag-verb">solve</span><span class="syn-tag syn-tag-verb">calculate</span></td><td class="col-note">解决/算出</td></tr>
+          <tr><td class="col-orig">bring up</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">raise</span><span class="syn-tag syn-tag-verb">mention</span><span class="syn-tag syn-tag-verb">introduce</span></td><td class="col-note">提出（话题/问题）；也含"抚养"之意</td></tr>
+          <tr><td class="col-orig">look into</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">investigate</span><span class="syn-tag syn-tag-verb">examine</span><span class="syn-tag syn-tag-verb">explore</span><span class="syn-tag syn-tag-verb">research</span></td><td class="col-note">调查/研究</td></tr>
+          <tr><td class="col-orig">run out of</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">use up</span><span class="syn-tag syn-tag-verb">exhaust</span><span class="syn-tag syn-tag-verb">deplete</span></td><td class="col-note">用完/耗尽</td></tr>
+          <tr><td class="col-orig">take part in</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">participate in</span><span class="syn-tag syn-tag-verb">engage in</span><span class="syn-tag syn-tag-verb">be involved in</span></td><td class="col-note">参加/参与</td></tr>
+          <tr><td class="col-orig">depend on</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">rely on</span><span class="syn-tag syn-tag-verb">count on</span><span class="syn-tag syn-tag-verb">be dependent on</span></td><td class="col-note">依靠/取决于</td></tr>
+          <tr><td class="col-orig">consist of</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-verb">be composed of</span><span class="syn-tag syn-tag-verb">be made up of</span><span class="syn-tag syn-tag-verb">comprise</span></td><td class="col-note">由…组成</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ================================================================================== -->
+  <!-- ====== 二、名词类同义替换 ====== -->
+  <!-- ================================================================================== -->
+  <div id="sec-noun" class="section">
+    <div class="section-title">
+      🔵 二、名词类同义替换 <span class="badge badge-noun">占比约25%</span>
+    </div>
+
+    <table>
+      <thead><tr><th>原文表达</th><th class="col-arrow"></th><th>选项替换词</th><th>真题语境 / 备注</th></tr></thead>
+      <tbody>
+        <tr><td class="col-orig">job</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-noun">occupation</span><span class="syn-tag syn-tag-noun">profession</span><span class="syn-tag syn-tag-noun">career</span><span class="syn-tag syn-tag-noun">position</span><span class="syn-tag syn-tag-noun">employment</span></td><td class="col-note">occupation更正式，career强调职业发展</td></tr>
+        <tr><td class="col-orig">problem</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-noun">issue</span><span class="syn-tag syn-tag-noun">trouble</span><span class="syn-tag syn-tag-noun">difficulty</span><span class="syn-tag syn-tag-noun">challenge</span><span class="syn-tag syn-tag-noun">dilemma</span></td><td class="col-note">issue是六级听力最高频名词替换之一</td></tr>
+        <tr><td class="col-orig">solution</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-noun">answer</span><span class="syn-tag syn-tag-noun">way out</span><span class="syn-tag syn-tag-noun">remedy</span><span class="syn-tag syn-tag-noun">resolution</span><span class="syn-tag syn-tag-noun">approach</span></td><td class="col-note">remedy偏"补救措施"</td></tr>
+        <tr><td class="col-orig">advantage</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-noun">benefit</span><span class="syn-tag syn-tag-noun">merit</span><span class="syn-tag syn-tag-noun">strength</span><span class="syn-tag syn-tag-noun">virtue</span><span class="syn-tag syn-tag-noun">plus side</span><span class="syn-tag syn-tag-noun">upside</span></td><td class="col-note">benefit也作动词"有益于"</td></tr>
+        <tr><td class="col-orig">disadvantage</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-noun">drawback</span><span class="syn-tag syn-tag-noun">weakness</span><span class="syn-tag syn-tag-noun">flaw</span><span class="syn-tag syn-tag-noun">shortcoming</span><span class="syn-tag syn-tag-noun">downside</span><span class="syn-tag syn-tag-noun">demerit</span></td><td class="col-note">drawback最常用于选项</td></tr>
+        <tr><td class="col-orig">result</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-noun">outcome</span><span class="syn-tag syn-tag-noun">consequence</span><span class="syn-tag syn-tag-noun">effect</span><span class="syn-tag syn-tag-noun">finding</span></td><td class="col-note">consequence偏"后果"，finding用于研究结论</td></tr>
+        <tr><td class="col-orig">reason / cause</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-noun">factor</span><span class="syn-tag syn-tag-noun">grounds</span><span class="syn-tag syn-tag-noun">motive</span><span class="syn-tag syn-tag-noun">explanation</span></td><td class="col-note">factor是高频词，表"因素"</td></tr>
+        <tr><td class="col-orig">goal / aim</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-noun">objective</span><span class="syn-tag syn-tag-noun">target</span><span class="syn-tag syn-tag-noun">purpose</span><span class="syn-tag syn-tag-noun">intention</span><span class="syn-tag syn-tag-noun">mission</span></td><td class="col-note">purpose用于 on purpose（故意地）</td></tr>
+        <tr><td class="col-orig">way / method</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-noun">approach</span><span class="syn-tag syn-tag-noun">means</span><span class="syn-tag syn-tag-noun">technique</span><span class="syn-tag syn-tag-noun">strategy</span><span class="syn-tag syn-tag-noun">manner</span></td><td class="col-note">approach是高频替换词</td></tr>
+        <tr><td class="col-orig">chance</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-noun">opportunity</span><span class="syn-tag syn-tag-noun">possibility</span><span class="syn-tag syn-tag-noun">prospect</span></td><td class="col-note">prospect偏"前景/可能性"</td></tr>
+        <tr><td class="col-orig">difference</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-noun">gap</span><span class="syn-tag syn-tag-noun">disparity</span><span class="syn-tag syn-tag-noun">distinction</span><span class="syn-tag syn-tag-noun">contrast</span></td><td class="col-note">disparity偏"不平等/悬殊"</td></tr>
+        <tr><td class="col-orig">effect / impact</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-noun">influence</span><span class="syn-tag syn-tag-noun">consequence</span><span class="syn-tag syn-tag-noun">implication</span></td><td class="col-note">implication偏"潜在影响"</td></tr>
+        <tr><td class="col-orig">part</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-noun">component</span><span class="syn-tag syn-tag-noun">element</span><span class="syn-tag syn-tag-noun">section</span><span class="syn-tag syn-tag-noun">portion</span><span class="syn-tag syn-tag-noun">segment</span></td><td class="col-note">组成部分</td></tr>
+        <tr><td class="col-orig">people</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-noun">individuals</span><span class="syn-tag syn-tag-noun">citizens</span><span class="syn-tag syn-tag-noun">residents</span><span class="syn-tag syn-tag-noun">the public</span></td><td class="col-note">individuals偏"个人"</td></tr>
+        <tr><td class="col-orig">money</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-noun">funds</span><span class="syn-tag syn-tag-noun">capital</span><span class="syn-tag syn-tag-noun">finance</span><span class="syn-tag syn-tag-noun">revenue</span><span class="syn-tag syn-tag-noun">income</span></td><td class="col-note">funds = 资金，revenue = 收入/税收</td></tr>
+        <tr><td class="col-orig">difficulty</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-noun">hardship</span><span class="syn-tag syn-tag-noun">obstacle</span><span class="syn-tag syn-tag-noun">barrier</span><span class="syn-tag syn-tag-noun">challenge</span></td><td class="col-note">barrier偏"障碍/壁垒"</td></tr>
+        <tr><td class="col-orig">development</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-noun">growth</span><span class="syn-tag syn-tag-noun">progress</span><span class="syn-tag syn-tag-noun">advancement</span><span class="syn-tag syn-tag-noun">evolution</span></td><td class="col-note">发展/进步</td></tr>
+        <tr><td class="col-orig">type / kind</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-noun">category</span><span class="syn-tag syn-tag-noun">species</span><span class="syn-tag syn-tag-noun">variety</span><span class="syn-tag syn-tag-noun">sort</span></td><td class="col-note">species用于生物种类</td></tr>
+        <tr><td class="col-orig">mistake</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-noun">error</span><span class="syn-tag syn-tag-noun">fault</span><span class="syn-tag syn-tag-noun">flaw</span></td><td class="col-note">fault偏"过失/责任"</td></tr>
+        <tr><td class="col-orig">suggestion</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-noun">proposal</span><span class="syn-tag syn-tag-noun">recommendation</span><span class="syn-tag syn-tag-noun">advice</span></td><td class="col-note">proposal偏正式，如商业提案</td></tr>
+        <tr><td class="col-orig">skill / ability</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-noun">capability</span><span class="syn-tag syn-tag-noun">capacity</span><span class="syn-tag syn-tag-noun">competence</span><span class="syn-tag syn-tag-noun">proficiency</span></td><td class="col-note">capacity也指"容量/产能"</td></tr>
+        <tr><td class="col-orig">knowledge</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-noun">expertise</span><span class="syn-tag syn-tag-noun">insight</span><span class="syn-tag syn-tag-noun">understanding</span></td><td class="col-note">expertise = 专业知识/专长</td></tr>
+        <tr><td class="col-orig">environment</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-noun">surroundings</span><span class="syn-tag syn-tag-noun">setting</span><span class="syn-tag syn-tag-noun">context</span></td><td class="col-note">setting偏"背景/场景"</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ================================================================================== -->
+  <!-- ====== 三、形容词类同义替换 ====== -->
+  <!-- ================================================================================== -->
+  <div id="sec-adj" class="section">
+    <div class="section-title">
+      🟢 三、形容词类同义替换 <span class="badge badge-adj">占比约20%</span>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">3.1 高频核心形容词替换</div>
+      <table>
+        <thead><tr><th>原文表达</th><th class="col-arrow"></th><th>选项替换词</th><th>真题语境 / 备注</th></tr></thead>
+        <tbody>
+          <tr><td class="col-orig">important</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">significant</span><span class="syn-tag syn-tag-adj">crucial</span><span class="syn-tag syn-tag-adj">vital</span><span class="syn-tag syn-tag-adj">essential</span><span class="syn-tag syn-tag-adj">critical</span><span class="syn-tag syn-tag-adj">indispensable</span></td><td class="col-note">significant在真题中出现8次以上，最高频替换</td></tr>
+          <tr><td class="col-orig">difficult</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">hard</span><span class="syn-tag syn-tag-adj">challenging</span><span class="syn-tag syn-tag-adj">tough</span><span class="syn-tag syn-tag-adj">demanding</span><span class="syn-tag syn-tag-adj">arduous</span></td><td class="col-note">challenging比difficult更积极</td></tr>
+          <tr><td class="col-orig">easy</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">simple</span><span class="syn-tag syn-tag-adj">effortless</span><span class="syn-tag syn-tag-adj">straightforward</span></td><td class="col-note">straightforward = 简单明了的</td></tr>
+          <tr><td class="col-orig">big / large</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">huge</span><span class="syn-tag syn-tag-adj">enormous</span><span class="syn-tag syn-tag-adj">massive</span><span class="syn-tag syn-tag-adj">vast</span><span class="syn-tag syn-tag-adj">tremendous</span><span class="syn-tag syn-tag-adj">considerable</span><span class="syn-tag syn-tag-adj">substantial</span></td><td class="col-note">considerable修饰数量/程度</td></tr>
+          <tr><td class="col-orig">small</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">tiny</span><span class="syn-tag syn-tag-adj">minor</span><span class="syn-tag syn-tag-adj">slight</span><span class="syn-tag syn-tag-adj">modest</span><span class="syn-tag syn-tag-adj">negligible</span></td><td class="col-note">modest也含"谦虚的"之意</td></tr>
+          <tr><td class="col-orig">many / much</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">numerous</span><span class="syn-tag syn-tag-adj">countless</span><span class="syn-tag syn-tag-adj">a number of</span><span class="syn-tag syn-tag-adj">various</span><span class="syn-tag syn-tag-adj">plenty of</span><span class="syn-tag syn-tag-adj">a great deal of</span></td><td class="col-note">numerous = 大量的，various = 各种各样的</td></tr>
+          <tr><td class="col-orig">good</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">excellent</span><span class="syn-tag syn-tag-adj">outstanding</span><span class="syn-tag syn-tag-adj">superb</span><span class="syn-tag syn-tag-adj">wonderful</span><span class="syn-tag syn-tag-adj">positive</span><span class="syn-tag syn-tag-adj">beneficial</span><span class="syn-tag syn-tag-adj">favorable</span></td><td class="col-note">beneficial = 有益的，高频考点</td></tr>
+          <tr><td class="col-orig">bad</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">poor</span><span class="syn-tag syn-tag-adj">terrible</span><span class="syn-tag syn-tag-adj">awful</span><span class="syn-tag syn-tag-adj">negative</span><span class="syn-tag syn-tag-adj">harmful</span><span class="syn-tag syn-tag-adj">adverse</span><span class="syn-tag syn-tag-adj">devastating</span></td><td class="col-note">adverse = 不利的，devastating = 毁灭性的</td></tr>
+          <tr><td class="col-orig">cheap</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">inexpensive</span><span class="syn-tag syn-tag-adj">affordable</span><span class="syn-tag syn-tag-adj">economical</span><span class="syn-tag syn-tag-adj">low-cost</span></td><td class="col-note">affordable = 买得起的，economical = 经济实惠的</td></tr>
+          <tr><td class="col-orig">expensive</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">dear</span><span class="syn-tag syn-tag-adj">pricy</span><span class="syn-tag syn-tag-adj">costly</span><span class="syn-tag syn-tag-adj">high-priced</span></td><td class="col-note">costly偏"代价高昂的"</td></tr>
+          <tr><td class="col-orig">clear</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">obvious</span><span class="syn-tag syn-tag-adj">evident</span><span class="syn-tag syn-tag-adj">apparent</span><span class="syn-tag syn-tag-adj">explicit</span><span class="syn-tag syn-tag-adj">distinct</span></td><td class="col-note">explicit = 明确表达的</td></tr>
+          <tr><td class="col-orig">different</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">various</span><span class="syn-tag syn-tag-adj">diverse</span><span class="syn-tag syn-tag-adj">distinct</span><span class="syn-tag syn-tag-adj">varied</span></td><td class="col-note">diverse偏"多元化的"</td></tr>
+          <tr><td class="col-orig">enough</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">sufficient</span><span class="syn-tag syn-tag-adj">adequate</span><span class="syn-tag syn-tag-adj">ample</span></td><td class="col-note">adequate = 足够的/适当的</td></tr>
+          <tr><td class="col-orig">right / correct</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">accurate</span><span class="syn-tag syn-tag-adj">precise</span><span class="syn-tag syn-tag-adj">exact</span><span class="syn-tag syn-tag-adj">proper</span><span class="syn-tag syn-tag-adj">appropriate</span></td><td class="col-note">accurate强调"精确性"</td></tr>
+          <tr><td class="col-orig">possible</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">likely</span><span class="syn-tag syn-tag-adj">probable</span><span class="syn-tag syn-tag-adj">potential</span><span class="syn-tag syn-tag-adj">feasible</span></td><td class="col-note">feasible = 可行的</td></tr>
+          <tr><td class="col-orig">certain</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">sure</span><span class="syn-tag syn-tag-adj">definite</span><span class="syn-tag syn-tag-adj">inevitable</span><span class="syn-tag syn-tag-adj">bound to</span></td><td class="col-note">inevitable = 不可避免的</td></tr>
+          <tr><td class="col-orig">common</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">ordinary</span><span class="syn-tag syn-tag-adj">usual</span><span class="syn-tag syn-tag-adj">typical</span><span class="syn-tag syn-tag-adj">widespread</span><span class="syn-tag syn-tag-adj">prevalent</span></td><td class="col-note">prevalent = 普遍的/盛行的</td></tr>
+          <tr><td class="col-orig">fast / quick</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">rapid</span><span class="syn-tag syn-tag-adj">swift</span><span class="syn-tag syn-tag-adj">prompt</span><span class="syn-tag syn-tag-adj">speedy</span></td><td class="col-note">prompt = 迅速的/即时的</td></tr>
+          <tr><td class="col-orig">slow</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">gradual</span><span class="syn-tag syn-tag-adj">sluggish</span><span class="syn-tag syn-tag-adj">steady</span></td><td class="col-note">gradual = 逐渐的，sluggish = 迟缓的</td></tr>
+          <tr><td class="col-orig">boring</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">dull</span><span class="syn-tag syn-tag-adj">tedious</span><span class="syn-tag syn-tag-adj">monotonous</span></td><td class="col-note">tedious = 冗长乏味的</td></tr>
+          <tr><td class="col-orig">careful</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">cautious</span><span class="syn-tag syn-tag-adj">prudent</span><span class="syn-tag syn-tag-adj">watchful</span></td><td class="col-note">prudent = 谨慎明智的</td></tr>
+          <tr><td class="col-orig">surprising</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">amazing</span><span class="syn-tag syn-tag-adj">astonishing</span><span class="syn-tag syn-tag-adj">remarkable</span><span class="syn-tag syn-tag-adj">stunning</span><span class="syn-tag syn-tag-adj">striking</span></td><td class="col-note">remarkable = 非凡的/引人注目的</td></tr>
+          <tr><td class="col-orig">sensitive</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">delicate</span></td><td class="col-note">delicate = 微妙的/精致的</td></tr>
+          <tr><td class="col-orig">doubtful</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">suspicious</span><span class="syn-tag syn-tag-adj">questionable</span><span class="syn-tag syn-tag-adj">suspect</span><span class="syn-tag syn-tag-adj">uncertain</span></td><td class="col-note">怀疑的</td></tr>
+          <tr><td class="col-orig">clumsy</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adj">awkward</span><span class="syn-tag syn-tag-adj">unskillful</span></td><td class="col-note">笨拙的</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ================================================================================== -->
+  <!-- ====== 四、副词类同义替换 ====== -->
+  <!-- ================================================================================== -->
+  <div id="sec-adv" class="section">
+    <div class="section-title">
+      🟡 四、副词类同义替换 <span class="badge badge-adj">占比约10%</span>
+    </div>
+
+    <table>
+      <thead><tr><th>原文表达</th><th class="col-arrow"></th><th>选项替换词</th><th>真题语境 / 备注</th></tr></thead>
+      <tbody>
+        <tr><td class="col-orig">very</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adv">extremely</span><span class="syn-tag syn-tag-adv">highly</span><span class="syn-tag syn-tag-adv">incredibly</span><span class="syn-tag syn-tag-adv">remarkably</span><span class="syn-tag syn-tag-adv">exceedingly</span></td><td class="col-note">"extremely boring" → "incredibly dull"是真题原例</td></tr>
+        <tr><td class="col-orig">mainly / mostly</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adv">primarily</span><span class="syn-tag syn-tag-adv">chiefly</span><span class="syn-tag syn-tag-adv">predominantly</span><span class="syn-tag syn-tag-adv">largely</span></td><td class="col-note">mainly = mostly是真题直接考查过的替换</td></tr>
+        <tr><td class="col-orig">especially</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adv">particularly</span><span class="syn-tag syn-tag-adv">notably</span><span class="syn-tag syn-tag-adv">specifically</span></td><td class="col-note">特别地</td></tr>
+        <tr><td class="col-orig">completely</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adv">entirely</span><span class="syn-tag syn-tag-adv">totally</span><span class="syn-tag syn-tag-adv">fully</span><span class="syn-tag syn-tag-adv">thoroughly</span></td><td class="col-note">完全地</td></tr>
+        <tr><td class="col-orig">almost</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adv">nearly</span><span class="syn-tag syn-tag-adv">virtually</span><span class="syn-tag syn-tag-adv">practically</span><span class="syn-tag syn-tag-adv">approximately</span></td><td class="col-note">approximately也表"大约"</td></tr>
+        <tr><td class="col-orig">immediately</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adv">instantly</span><span class="syn-tag syn-tag-adv">right away</span><span class="syn-tag syn-tag-adv">at once</span><span class="syn-tag syn-tag-adv">promptly</span></td><td class="col-note">立即</td></tr>
+        <tr><td class="col-orig">frequently / often</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adv">regularly</span><span class="syn-tag syn-tag-adv">constantly</span></td><td class="col-note">经常地</td></tr>
+        <tr><td class="col-orig">recently</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adv">lately</span><span class="syn-tag syn-tag-adv">newly</span><span class="syn-tag syn-tag-adv">currently</span></td><td class="col-note">最近</td></tr>
+        <tr><td class="col-orig">more and more</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adv">increasingly</span><span class="syn-tag syn-tag-adv">growing</span><span class="syn-tag syn-tag-adv">rising</span></td><td class="col-note">越来越……（副词化修饰）</td></tr>
+        <tr><td class="col-orig">in fact</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adv">actually</span><span class="syn-tag syn-tag-adv">as a matter of fact</span><span class="syn-tag syn-tag-adv">indeed</span></td><td class="col-note">实际上</td></tr>
+        <tr><td class="col-orig">in order to</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adv">so as to</span><span class="syn-tag syn-tag-adv">for the purpose of</span><span class="syn-tag syn-tag-adv">with the aim of</span></td><td class="col-note">为了…目的</td></tr>
+        <tr><td class="col-orig">because of</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-adv">due to</span><span class="syn-tag syn-tag-adv">owing to</span><span class="syn-tag syn-tag-adv">as a result of</span><span class="syn-tag syn-tag-adv">on account of</span></td><td class="col-note">由于/因为</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ================================================================================== -->
+  <!-- ====== 五、短语类同义替换 ====== -->
+  <!-- ================================================================================== -->
+  <div id="sec-phrase" class="section">
+    <div class="section-title">
+      🩷 五、短语/固定搭配类同义替换 <span class="badge badge-phrase">占比约15%</span>
+    </div>
+
+    <table>
+      <thead><tr><th>原文短语</th><th class="col-arrow"></th><th>选项替换短语</th><th>真题语境 / 备注</th></tr></thead>
+      <tbody>
+        <tr><td class="col-orig">be able to</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">be capable of</span><span class="syn-tag syn-tag-phrase">have the ability to</span></td><td class="col-note">能够</td></tr>
+        <tr><td class="col-orig">be good at</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">be skilled at</span><span class="syn-tag syn-tag-phrase">be proficient in</span><span class="syn-tag syn-tag-phrase">excel at</span><span class="syn-tag syn-tag-phrase">be expert in</span></td><td class="col-note">擅长</td></tr>
+        <tr><td class="col-orig">be good for</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">be beneficial to</span><span class="syn-tag syn-tag-phrase">be helpful to</span><span class="syn-tag syn-tag-phrase">be conducive to</span></td><td class="col-note">对…有益</td></tr>
+        <tr><td class="col-orig">be bad for</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">be harmful to</span><span class="syn-tag syn-tag-phrase">be detrimental to</span></td><td class="col-note">对…有害</td></tr>
+        <tr><td class="col-orig">be interested in</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">be keen on</span><span class="syn-tag syn-tag-phrase">be enthusiastic about</span><span class="syn-tag syn-tag-phrase">be fascinated by</span></td><td class="col-note">对…感兴趣</td></tr>
+        <tr><td class="col-orig">a lot of</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">plenty of</span><span class="syn-tag syn-tag-phrase">a great deal of</span><span class="syn-tag syn-tag-phrase">a large number of</span></td><td class="col-note">大量的</td></tr>
+        <tr><td class="col-orig">in terms of</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">regarding</span><span class="syn-tag syn-tag-phrase">concerning</span><span class="syn-tag syn-tag-phrase">with respect to</span><span class="syn-tag syn-tag-phrase">as for</span></td><td class="col-note">就…而言</td></tr>
+        <tr><td class="col-orig">for example</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">for instance</span><span class="syn-tag syn-tag-phrase">such as</span><span class="syn-tag syn-tag-phrase">to illustrate</span></td><td class="col-note">例如</td></tr>
+        <tr><td class="col-orig">on the other hand</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">conversely</span><span class="syn-tag syn-tag-phrase">however</span><span class="syn-tag syn-tag-phrase">in contrast</span></td><td class="col-note">另一方面/然而</td></tr>
+        <tr><td class="col-orig">remote work</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">working from home</span><span class="syn-tag syn-tag-phrase">telecommuting</span></td><td class="col-note">真题经典替换案例</td></tr>
+        <tr><td class="col-orig">solve the problem</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">find a solution to the issue</span></td><td class="col-note">真题经典句式转换</td></tr>
+        <tr><td class="col-orig">of great importance</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">very important</span><span class="syn-tag syn-tag-phrase">highly significant</span></td><td class="col-note">词性转换 + 语义同义</td></tr>
+        <tr><td class="col-orig">add thickness to</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">make thicker</span></td><td class="col-note">2018年6月真题原例</td></tr>
+        <tr><td class="col-orig">a type of</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">a kind of</span></td><td class="col-note">真题原例</td></tr>
+        <tr><td class="col-orig">quarrel a lot</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">persistent arguments</span></td><td class="col-note">真题原例：频繁争吵→持续争论</td></tr>
+        <tr><td class="col-orig">the only children</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">have no brothers or sisters</span><span class="syn-tag syn-tag-phrase">have no siblings</span></td><td class="col-note">真题原例</td></tr>
+        <tr><td class="col-orig">without ever</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">never</span></td><td class="col-note">真题原例</td></tr>
+        <tr><td class="col-orig">exotic species</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">non-native organisms</span><span class="syn-tag syn-tag-phrase">alien species</span><span class="syn-tag syn-tag-phrase">invasive species</span><span class="syn-tag syn-tag-phrase">introduced species</span></td><td class="col-note">真题原例：外来物种的多种替换</td></tr>
+        <tr><td class="col-orig">is particularly good at</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">is especially skillful at</span></td><td class="col-note">真题高频替换</td></tr>
+        <tr><td class="col-orig">increases the speed and effectiveness</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">more quickly and more effectively</span></td><td class="col-note">词性转换替换</td></tr>
+        <tr><td class="col-orig">getting married</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">find a mate</span><span class="syn-tag syn-tag-phrase">making a family</span></td><td class="col-note">语义替换</td></tr>
+        <tr><td class="col-orig">intensifies the feeling of rewards</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">rewards are more intense</span></td><td class="col-note">句式转换</td></tr>
+        <tr><td class="col-orig">a wide range of</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">various</span><span class="syn-tag syn-tag-phrase">many different kinds of</span></td><td class="col-note">多样性表达</td></tr>
+        <tr><td class="col-orig">the majority of</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">most of</span></td><td class="col-note">大多数</td></tr>
+        <tr><td class="col-orig">large quantities of data</td><td class="col-arrow">→</td><td><span class="syn-tag syn-tag-phrase">large amounts of data</span></td><td class="col-note">2025年12月真题原例</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ================================================================================== -->
+  <!-- ====== 六、句式转换型同义替换 ====== -->
+  <!-- ================================================================================== -->
+  <div id="sec-sentence" class="section">
+    <div class="section-title">
+      🟣 六、句式转换 / 语义概括型替换 <span class="badge badge-sent">占比约10%</span>
+    </div>
+
+    <div class="note-box">
+      <strong>⚠ 此类型最具隐蔽性：</strong>六级听力中约40%的答案需要语义概括。原文用一整句话描述，选项用<strong>总结性词汇</strong>或<strong>不同句式</strong>表达相同含义。必须理解整句含义而非抓单个词。
+    </div>
+
+    <table>
+      <thead><tr><th>原文句式 / 表达</th><th class="col-arrow"></th><th>选项中的转换句式</th><th>替换类型</th></tr></thead>
+      <tbody>
+        <tr><td class="col-orig">There has been a reduction in energy consumption.</td><td class="col-arrow">→</td><td>People are consuming less energy.</td><td class="col-note">名词→动词：reduction → consuming less</td></tr>
+        <tr><td class="col-orig">It is believed that...</td><td class="col-arrow">→</td><td>People believe that...</td><td class="col-note">被动→主动</td></tr>
+        <tr><td class="col-orig">The film was extremely boring.</td><td class="col-arrow">→</td><td>The film was incredibly dull.</td><td class="col-note">副词+形容词双重替换</td></tr>
+        <tr><td class="col-orig">EQ focuses on one's ability to recognize and manage emotions.</td><td class="col-arrow">→</td><td>Emotional recognition and management.</td><td class="col-note">动词短语→名词短语概括</td></tr>
+        <tr><td class="col-orig">The ground floor of their cottage was flooded.</td><td class="col-arrow">→</td><td>Their cottage ground floor was submerged.</td><td class="col-note">flooded ↔ submerged（2020真题）</td></tr>
+        <tr><td class="col-orig">The woman takes her own cultural norms for granted.</td><td class="col-arrow">→</td><td>She is unaware of cultural differences.</td><td class="col-note">语义概括（2025真题）</td></tr>
+        <tr><td class="col-orig">It can process large quantities of data quickly and accurately, saving researchers' time and energy.</td><td class="col-arrow">→</td><td>It can process large amounts of data efficiently.</td><td class="col-note">合并简化 + 同义词（2025真题）</td></tr>
+        <tr><td class="col-orig">imparting it to others</td><td class="col-arrow">→</td><td>teach it to someone else</td><td class="col-note">正式词→口语化</td></tr>
+        <tr><td class="col-orig">socially important information</td><td class="col-arrow">→</td><td>socially significant information</td><td class="col-note">important ↔ significant</td></tr>
+        <tr><td class="col-orig">increases risk-taking</td><td class="col-arrow">→</td><td>makes people more likely to take risks</td><td class="col-note">名词短语→从句展开</td></tr>
+        <tr><td class="col-orig">benefit</td><td class="col-arrow">→</td><td>be good for / be helpful to</td><td class="col-note">动词→形容词短语（2026高频）</td></tr>
+        <tr><td class="col-orig">Bad driving behavior is the main reason for the high death rate on roads.</td><td class="col-arrow">→</td><td>The high death rate is mainly caused by bad driving behavior.</td><td class="col-note">主被动语态转换（2024真题）</td></tr>
+        <tr><td class="col-orig">Most people think online learning is convenient.</td><td class="col-arrow">→</td><td>Many people hold that online learning is convenient.</td><td class="col-note">think → hold，most → many</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ================================================================================== -->
+  <!-- ====== 七、按场景分类的同义替换 ====== -->
+  <!-- ================================================================================== -->
+  <div id="sec-scene" class="section">
+    <div class="section-title">
+      🏷️ 七、按高频场景分类的同义替换
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">购物消费场景</div>
+      <table>
+        <thead><tr><th>核心词</th><th class="col-arrow"></th><th>替换词</th><th>备注</th></tr></thead>
+        <tbody>
+          <tr><td class="col-orig">buy</td><td class="col-arrow">→</td><td>purchase / get / acquire</td><td class="col-note">purchase更正式</td></tr>
+          <tr><td class="col-orig">cheap</td><td class="col-arrow">→</td><td>inexpensive / affordable / economical</td><td class="col-note">affordable=买得起的</td></tr>
+          <tr><td class="col-orig">expensive</td><td class="col-arrow">→</td><td>dear / pricy / costly</td><td class="col-note">costly=代价高昂</td></tr>
+          <tr><td class="col-orig">discount</td><td class="col-arrow">→</td><td>reduction / cut / off</td><td class="col-note">打折</td></tr>
+          <tr><td class="col-orig">refund</td><td class="col-arrow">→</td><td>get money back / return payment</td><td class="col-note">退款</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">职场/工作场景</div>
+      <table>
+        <thead><tr><th>核心词</th><th class="col-arrow"></th><th>替换词</th><th>备注</th></tr></thead>
+        <tbody>
+          <tr><td class="col-orig">job</td><td class="col-arrow">→</td><td>occupation / profession / position</td><td class="col-note">工作</td></tr>
+          <tr><td class="col-orig">work with</td><td class="col-arrow">→</td><td>collaborate with / cooperate with</td><td class="col-note">合作</td></tr>
+          <tr><td class="col-orig">assign</td><td class="col-arrow">→</td><td>allocate / designate / give</td><td class="col-note">分配任务</td></tr>
+          <tr><td class="col-orig">deadline</td><td class="col-arrow">→</td><td>due date / time limit</td><td class="col-note">截止日期</td></tr>
+          <tr><td class="col-orig">promotion</td><td class="col-arrow">→</td><td>advancement / career growth / rise</td><td class="col-note">晋升</td></tr>
+          <tr><td class="col-orig">salary</td><td class="col-arrow">→</td><td>income / earnings / pay / wage</td><td class="col-note">薪资</td></tr>
+          <tr><td class="col-orig">recruit</td><td class="col-arrow">→</td><td>hire / employ / take on / enroll</td><td class="col-note">招聘</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">教育/学术场景</div>
+      <table>
+        <thead><tr><th>核心词</th><th class="col-arrow"></th><th>替换词</th><th>备注</th></tr></thead>
+        <tbody>
+          <tr><td class="col-orig">assignment</td><td class="col-arrow">→</td><td>task / homework / project</td><td class="col-note">作业/任务</td></tr>
+          <tr><td class="col-orig">research</td><td class="col-arrow">→</td><td>study / investigation / survey</td><td class="col-note">研究</td></tr>
+          <tr><td class="col-orig">result</td><td class="col-arrow">→</td><td>finding / outcome / conclusion</td><td class="col-note">研究结果</td></tr>
+          <tr><td class="col-orig">teach</td><td class="col-arrow">→</td><td>instruct / educate / impart</td><td class="col-note">教学</td></tr>
+          <tr><td class="col-orig">learn</td><td class="col-arrow">→</td><td>acquire / master / grasp / pick up</td><td class="col-note">学习</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">环境/自然场景</div>
+      <table>
+        <thead><tr><th>核心词</th><th class="col-arrow"></th><th>替换词</th><th>备注</th></tr></thead>
+        <tbody>
+          <tr><td class="col-orig">pollution</td><td class="col-arrow">→</td><td>contamination / emissions</td><td class="col-note">污染</td></tr>
+          <tr><td class="col-orig">protect</td><td class="col-arrow">→</td><td>preserve / conserve / safeguard</td><td class="col-note">保护</td></tr>
+          <tr><td class="col-orig">environment</td><td class="col-arrow">→</td><td>surroundings / ecosystem / habitat</td><td class="col-note">环境</td></tr>
+          <tr><td class="col-orig">disaster</td><td class="col-arrow">→</td><td>catastrophe / calamity / crisis</td><td class="col-note">灾难</td></tr>
+          <tr><td class="col-orig">flooded</td><td class="col-arrow">→</td><td>submerged / inundated</td><td class="col-note">被淹没（真题）</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">健康/医疗场景</div>
+      <table>
+        <thead><tr><th>核心词</th><th class="col-arrow"></th><th>替换词</th><th>备注</th></tr></thead>
+        <tbody>
+          <tr><td class="col-orig">disease</td><td class="col-arrow">→</td><td>illness / sickness / ailment / condition</td><td class="col-note">疾病</td></tr>
+          <tr><td class="col-orig">cure</td><td class="col-arrow">→</td><td>treat / remedy / heal / therapy</td><td class="col-note">治疗</td></tr>
+          <tr><td class="col-orig">prevent</td><td class="col-arrow">→</td><td>stop / avoid / ward off</td><td class="col-note">预防</td></tr>
+          <tr><td class="col-orig">symptom</td><td class="col-arrow">→</td><td>sign / indication / manifestation</td><td class="col-note">症状</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">科技/数字场景</div>
+      <table>
+        <thead><tr><th>核心词</th><th class="col-arrow"></th><th>替换词</th><th>备注</th></tr></thead>
+        <tbody>
+          <tr><td class="col-orig">data</td><td class="col-arrow">→</td><td>information / figures / statistics</td><td class="col-note">数据</td></tr>
+          <tr><td class="col-orig">develop</td><td class="col-arrow">→</td><td>create / design / innovate / engineer</td><td class="col-note">开发</td></tr>
+          <tr><td class="col-orig">digital</td><td class="col-arrow">→</td><td>electronic / online / virtual / computerized</td><td class="col-note">数字的</td></tr>
+          <tr><td class="col-orig">device</td><td class="col-arrow">→</td><td>gadget / equipment / tool / appliance</td><td class="col-note">设备</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ====== 总结 ====== -->
+  <div class="intro-card" style="margin-top: 20px;">
+    <h2>🎯 听力同义替换识别核心技巧</h2>
+    <ul>
+      <li><strong>模型一·词性转换：</strong>原文名词 → 选项动词/形容词（如：reduction → consuming less，important → of great significance）</li>
+      <li><strong>模型二·近义词替换：</strong>原文简单词 → 选项正式词（如：help → assist，buy → purchase，think → believe/hold）</li>
+      <li><strong>模型三·短语替换：</strong>原文短语 → 选项同义短语/单词（如：add thickness to → make thicker，without ever → never）</li>
+      <li><strong>模型四·语义概括：</strong>原文具体描述 → 选项概括性表述（如：quarrel a lot → persistent arguments，remote work → working from home）</li>
+      <li><strong>实战技巧：</strong>听音时关注"词族"——听到difference自动联想到different/differ，听到consume想到consumer/consumption</li>
+      <li><strong>数据说明：</strong>本词库综合2021-2025年六级听力真题整理，覆盖<strong>200+组</strong>同义替换，涵盖长对话、短文理解、新闻报道全部题型</li>
+    </ul>
+  </div>
+
+</div>
+
+<div class="footer">
+  CET-6 听力同义替换词库 | 基于2021-2025年六级真题整理 | 数据来源：新东方、CSDN、B站六级真题解析<br>
+  生成日期：2026-06-12
+</div>
+
+</body>
+</html>

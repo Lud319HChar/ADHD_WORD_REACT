@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CET6 词汇训练中枢 V3</title>
+    <link rel="stylesheet" href="css/hube.css">
+</head>
+<body>
+
+    <nav id="hub-nav">
+        <div class="hub-nav-tab active" data-panel="training">🎯 极速训练</div>
+        <div class="hub-nav-tab" data-panel="words">📖 完整词库</div>
+        <div class="hub-nav-tab" data-panel="super-hf">🔥 特高频词</div>
+        <div class="hub-nav-tab" data-panel="phrases">📝 高频短语</div>
+        <div class="hub-nav-tab" data-panel="keywords">🏷️ 翻译关键词</div>
+        <div class="hub-nav-tab" data-panel="search">🔍 全局搜索</div>
+    </nav>
+
+    <div id="hub-content">
+
+        <!-- ===== 训练面板 ===== -->
+        <div id="panel-training" class="hub-panel active">
+            <div class="panel-title">🎯 ADHD CET6 极速反应训练</div>
+            <div class="panel-subtitle">按 [SPACE] 开始 / [K] 知道 / [J] 不熟 / [A/D] 历史漫游 / [L] 词库 / [U] 不熟词库 / [W] 历史</div>
+            <iframe src="index.html" id="training-iframe"
+                style="width:100%;height:85vh;border:1px solid #222;border-radius:10px;background:#0f0f11;">
+            </iframe>
+        </div>
+
+        <!-- ===== 词库面板 ===== -->
+        <div id="panel-words" class="hub-panel">
+            <div class="panel-title">📖 CET6 完整词库</div>
+            <div id="words-stats-summary" class="stats-summary">
+                <div class="stat-item"><span class="stat-value" id="w-total">0</span><span class="stat-label">总词汇</span></div>
+                <div class="stat-item"><span class="stat-value" id="w-noun">0</span><span class="stat-label">名词</span></div>
+                <div class="stat-item"><span class="stat-value" id="w-verb">0</span><span class="stat-label">动词</span></div>
+                <div class="stat-item"><span class="stat-value" id="w-adj">0</span><span class="stat-label">形容词</span></div>
+                <div class="stat-item"><span class="stat-value" id="w-adv">0</span><span class="stat-label">副词</span></div>
+                <div class="stat-item"><span class="stat-value" id="w-prep">0</span><span class="stat-label">介词</span></div>
+            </div>
+            <div class="category-filters" id="words-filters">
+                <button class="filter-btn active" data-filter="all">全部</button>
+                <button class="filter-btn" data-filter="noun">名词</button>
+                <button class="filter-btn" data-filter="verb">动词</button>
+                <button class="filter-btn" data-filter="adjective">形容词</button>
+                <button class="filter-btn" data-filter="adverb">副词</button>
+                <button class="filter-btn" data-filter="preposition">介词</button>
+                <button class="filter-btn" data-filter="academic">学术</button>
+                <button class="filter-btn" data-filter="daily">生活</button>
+                <button class="filter-btn" data-filter="technology">科技</button>
+                <button class="filter-btn" data-filter="economy">经济</button>
+                <button class="filter-btn" data-filter="society">社会</button>
+                <button class="filter-btn" data-filter="emotion">情感</button>
+                <button class="filter-btn" data-filter="basic">基础</button>
+                <button class="filter-btn" data-filter="intermediate">进阶</button>
+                <button class="filter-btn" data-filter="advanced">高级</button>
+            </div>
+            <div id="words-grid" class="word-library-grid"></div>
+        </div>
+
+        <!-- ===== 特高频面板 ===== -->
+        <div id="panel-super-hf" class="hub-panel">
+            <div class="panel-title">🔥 特高频词汇 <span style="font-size:0.9rem;color:#666;font-weight:normal;margin-left:10px;">CET6历年真题中最高频的50词</span></div>
+            <div id="super-hf-stats" class="stats-summary">
+                <div class="stat-item"><span class="stat-value" id="shf-total">0</span><span class="stat-label">特高频词</span></div>
+                <div class="stat-item"><span class="stat-value" id="shf-noun">0</span><span class="stat-label">名词</span></div>
+                <div class="stat-item"><span class="stat-value" id="shf-verb">0</span><span class="stat-label">动词</span></div>
+                <div class="stat-item"><span class="stat-value" id="shf-adj">0</span><span class="stat-label">形容词</span></div>
+            </div>
+            <div id="super-hf-grid" class="word-library-grid"></div>
+        </div>
+
+        <!-- ===== 短语面板 ===== -->
+        <div id="panel-phrases" class="hub-panel">
+            <div class="panel-title">📝 CET6 高频短语 <span style="font-size:0.9rem;color:#666;font-weight:normal;margin-left:10px;">150个考试最常出现的短语搭配</span></div>
+            <div id="phrases-stats" class="stats-summary">
+                <div class="stat-item"><span class="stat-value" id="p-total">0</span><span class="stat-label">总短语</span></div>
+                <div class="stat-item"><span class="stat-value" id="p-verb">0</span><span class="stat-label">动词短语</span></div>
+                <div class="stat-item"><span class="stat-value" id="p-prep">0</span><span class="stat-label">介词短语</span></div>
+                <div class="stat-item"><span class="stat-value" id="p-trans">0</span><span class="stat-label">过渡词</span></div>
+                <div class="stat-item"><span class="stat-value" id="p-fixed">0</span><span class="stat-label">固定搭配</span></div>
+            </div>
+            <div class="category-filters" id="phrases-filters">
+                <button class="filter-btn active" data-filter="all">全部</button>
+                <button class="filter-btn" data-filter="动词短语">动词短语</button>
+                <button class="filter-btn" data-filter="介词短语">介词短语</button>
+                <button class="filter-btn" data-filter="过渡词">过渡词</button>
+                <button class="filter-btn" data-filter="固定搭配">固定搭配</button>
+            </div>
+            <div id="phrases-content"></div>
+        </div>
+
+        <!-- ===== 关键词面板 ===== -->
+        <div id="panel-keywords" class="hub-panel">
+            <div class="panel-title">🏷️ 翻译关键词 <span style="font-size:0.9rem;color:#666;font-weight:normal;margin-left:10px;">按语义类别整理的词汇群组</span></div>
+            <div class="panel-subtitle">点击关键词群组展开查看该类别下的所有相关词汇</div>
+            <div id="keywords-content"></div>
+        </div>
+
+        <!-- ===== 搜索面板 ===== -->
+        <div id="panel-search" class="hub-panel">
+            <div class="panel-title">🔍 全局搜索</div>
+            <div class="panel-subtitle">跨单词库和短语库搜索，支持英文/中文/音标匹配</div>
+            <div id="search-bar">
+                <input type="text" id="search-input" placeholder="输入英文单词、短语或中文释义...">
+                <button id="search-btn">搜索</button>
+            </div>
+            <div id="search-suggestions"></div>
+            <div id="search-results"></div>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { wordDB } from './js/wordDB.js';
+        import { phraseDB } from './js/phraseDB.js';
+        import { keywordsDB } from './js/keywordsDB.js';
+        import { searchWords, searchPhrases, searchKeywords, getSuggestions, renderSearchResults } from './js/search.js';
+        import { WORD_CATEGORIES, WORD_TOPICS, WORD_LEVELS, SUPER_HF_WORDS, MULTI_TRANSLATION_WORDS } from './js/constants.js';
+
+        // ==================== 词库导航状态 ====================
+        let hubWordsCursor = 0;
+        let hubWordsFiltered = [];
+        let hubWordsFilterType = 'all';
+        let hubSHFCursor = 0;
+        let hubSHFWords = [];
+
+        // ==================== 面板切换 ====================
+        const tabs = document.querySelectorAll('.hub-nav-tab');
+        const panels = document.querySelectorAll('.hub-panel');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const panelId = tab.dataset.panel;
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                panels.forEach(p => p.classList.remove('active'));
+                document.getElementById(`panel-${panelId}`).classList.add('active');
+                
+                if (panelId === 'words') renderWordsPanel('all');
+                if (panelId === 'phrases') renderPhrasesPanel('all');
+                if (panelId === 'super-hf') renderSuperHFPanel();
+                if (panelId === 'keywords') renderKeywordsPanel();
+            });
+        });
+
+        // ==================== 词库面板 ====================
+        function renderWordsPanel(filterType) {
+            const grid = document.getElementById('words-grid');
+            let filtered = filterWords(filterType);
+            hubWordsFiltered = filtered;
+            hubWordsFilterType = filterType;
+            hubWordsCursor = 0;
+
+            updateWordStats(filtered);
+
+            grid.innerHTML = filtered.map((w, i) => `
+                <div class="word-card ${getCategoryClass(w.category)} ${SUPER_HF_WORDS.has(w.word) ? '' : ''} ${i === 0 ? 'word-lib-selected' : ''}">
+                    <div class="word">${w.word} ${SUPER_HF_WORDS.has(w.word) ? '<span class="super-hf-badge">高</span>' : ''} ${MULTI_TRANSLATION_WORDS.has(w.word) ? '<span style="display:inline-block;background:#ff9500;color:#000;font-size:0.65rem;padding:2px 6px;border-radius:3px;margin-left:4px;font-weight:bold;">多译</span>' : ''}</div>
+                    <div class="phonetic">${w.phonetic}</div>
+                    <div class="meaning">${w.meaning}</div>
+                    <div class="example">${w.example}</div>
+                    <div class="tags">
+                        <span class="tag category">${w.category}</span>
+                        <span class="tag topic">${w.topic}</span>
+                        <span class="tag level">${w.level}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterWords(type) {
+            if (type === 'all') return wordDB;
+            if (type === 'noun') return wordDB.filter(w => w.category === WORD_CATEGORIES.NOUN);
+            if (type === 'verb') return wordDB.filter(w => w.category === WORD_CATEGORIES.VERB);
+            if (type === 'adjective') return wordDB.filter(w => w.category === WORD_CATEGORIES.ADJECTIVE);
+            if (type === 'adverb') return wordDB.filter(w => w.category === WORD_CATEGORIES.ADVERB);
+            if (type === 'preposition') return wordDB.filter(w => w.category === WORD_CATEGORIES.PREPOSITION);
+            if (type === 'academic') return wordDB.filter(w => w.topic === WORD_TOPICS.ACADEMIC);
+            if (type === 'daily') return wordDB.filter(w => w.topic === WORD_TOPICS.DAILY);
+            if (type === 'technology') return wordDB.filter(w => w.topic === WORD_TOPICS.TECHNOLOGY);
+            if (type === 'economy') return wordDB.filter(w => w.topic === WORD_TOPICS.ECONOMY);
+            if (type === 'society') return wordDB.filter(w => w.topic === WORD_TOPICS.SOCIETY);
+            if (type === 'emotion') return wordDB.filter(w => w.topic === WORD_TOPICS.EMOTION);
+            if (type === 'basic') return wordDB.filter(w => w.level === WORD_LEVELS.BASIC);
+            if (type === 'intermediate') return wordDB.filter(w => w.level === WORD_LEVELS.INTERMEDIATE);
+            if (type === 'advanced') return wordDB.filter(w => w.level === WORD_LEVELS.ADVANCED);
+            return wordDB;
+        }
+
+        function updateWordStats(words) {
+            document.getElementById('w-total').textContent = words.length;
+            document.getElementById('w-noun').textContent = words.filter(w => w.category === WORD_CATEGORIES.NOUN).length;
+            document.getElementById('w-verb').textContent = words.filter(w => w.category === WORD_CATEGORIES.VERB).length;
+            document.getElementById('w-adj').textContent = words.filter(w => w.category === WORD_CATEGORIES.ADJECTIVE).length;
+            document.getElementById('w-adv').textContent = words.filter(w => w.category === WORD_CATEGORIES.ADVERB).length;
+            document.getElementById('w-prep').textContent = words.filter(w => w.category === WORD_CATEGORIES.PREPOSITION).length;
+        }
+
+        function getCategoryClass(category) {
+            const map = {
+                [WORD_CATEGORIES.NOUN]: 'noun',
+                [WORD_CATEGORIES.VERB]: 'verb',
+                [WORD_CATEGORIES.ADJECTIVE]: 'adjective',
+                [WORD_CATEGORIES.ADVERB]: 'adverb',
+                [WORD_CATEGORIES.PREPOSITION]: 'preposition'
+            };
+            return map[category] || '';
+        }
+
+        document.getElementById('words-filters').addEventListener('click', e => {
+            if (e.target.classList.contains('filter-btn')) {
+                document.querySelectorAll('#words-filters .filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                renderWordsPanel(e.target.dataset.filter);
+            }
+        });
+
+        // ==================== 搜索面板 ====================
+        const searchInput = document.getElementById('search-input');
+        const suggestionsDiv = document.getElementById('search-suggestions');
+
+        searchInput.addEventListener('input', () => {
+            const q = searchInput.value;
+            if (q.length >= 2) {
+                const suggestions = getSuggestions(q);
+                suggestionsDiv.innerHTML = suggestions.map(s => `
+                    <div class="suggestion-item" data-text="${s.text}">
+                        <span class="suggestion-type">[${s.type === 'word' ? '单词' : '短语'}]</span>
+                        <span class="suggestion-text">${s.text}</span>
+                        <span class="suggestion-sub">${s.subtext}</span>
+                    </div>
+                `).join('');
+
+                suggestionsDiv.querySelectorAll('.suggestion-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        searchInput.value = item.dataset.text;
+                        suggestionsDiv.innerHTML = '';
+                        renderSearchResults(item.dataset.text, 'search-results');
+                    });
+                });
+            } else {
+                suggestionsDiv.innerHTML = '';
+            }
+        });
+
+        document.getElementById('search-btn').addEventListener('click', () => {
+            renderSearchResults(searchInput.value, 'search-results');
+        });
+
+        searchInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                renderSearchResults(searchInput.value, 'search-results');
+            }
+        });
+
+        // ==================== 短语面板 ====================
+        function renderPhrasesPanel(filterType) {
+            const container = document.getElementById('phrases-content');
+            let filtered = filterType === 'all' ? phraseDB : phraseDB.filter(p => p.category === filterType);
+
+            document.getElementById('p-total').textContent = filtered.length;
+            document.getElementById('p-verb').textContent = filtered.filter(p => p.category === '动词短语').length;
+            document.getElementById('p-prep').textContent = filtered.filter(p => p.category === '介词短语').length;
+            document.getElementById('p-trans').textContent = filtered.filter(p => p.category === '过渡词').length;
+            document.getElementById('p-fixed').textContent = filtered.filter(p => p.category === '固定搭配').length;
+
+            const categories = ['动词短语', '介词短语', '过渡词', '固定搭配'];
+            let html = '';
+
+            categories.forEach(cat => {
+                const items = filtered.filter(p => p.category === cat);
+                if (items.length === 0) return;
+                html += `<div class="phrase-category-title">${cat} (${items.length})</div>`;
+                html += '<div class="phrase-grid">';
+                html += items.map(p => `
+                    <div class="phrase-card">
+                        <div class="phrase-text">${p.phrase}</div>
+                        <div class="phrase-meaning">${p.meaning}</div>
+                        <div class="phrase-example">${p.example}</div>
+                    </div>
+                `).join('');
+                html += '</div>';
+            });
+
+            container.innerHTML = html;
+        }
+
+        document.getElementById('phrases-filters').addEventListener('click', e => {
+            if (e.target.classList.contains('filter-btn')) {
+                document.querySelectorAll('#phrases-filters .filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                renderPhrasesPanel(e.target.dataset.filter);
+            }
+        });
+
+        // ==================== 特高频面板 ====================
+        function renderSuperHFPanel() {
+            const grid = document.getElementById('super-hf-grid');
+            const superWords = wordDB.filter(w => SUPER_HF_WORDS.has(w.word));
+            hubSHFWords = superWords;
+            hubSHFCursor = 0;
+
+            document.getElementById('shf-total').textContent = superWords.length;
+            document.getElementById('shf-noun').textContent = superWords.filter(w => w.category === WORD_CATEGORIES.NOUN).length;
+            document.getElementById('shf-verb').textContent = superWords.filter(w => w.category === WORD_CATEGORIES.VERB).length;
+            document.getElementById('shf-adj').textContent = superWords.filter(w => w.category === WORD_CATEGORIES.ADJECTIVE).length;
+
+            grid.innerHTML = superWords.map((w, i) => `
+                <div class="word-card ${getCategoryClass(w.category)} ${i === 0 ? 'word-lib-selected' : ''}">
+                    <div class="word">${w.word} <span class="super-hf-badge">特高频</span> ${MULTI_TRANSLATION_WORDS.has(w.word) ? '<span style="display:inline-block;background:#ff9500;color:#000;font-size:0.65rem;padding:2px 6px;border-radius:3px;margin-left:4px;font-weight:bold;">多译</span>' : ''}</div>
+                    <div class="phonetic">${w.phonetic}</div>
+                    <div class="meaning">${w.meaning}</div>
+                    <div class="example">${w.example}</div>
+                    <div class="tags">
+                        <span class="tag category">${w.category}</span>
+                        <span class="tag topic">${w.topic}</span>
+                        <span class="tag level">${w.level}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ==================== 关键词面板 ====================
+        function renderKeywordsPanel() {
+            const container = document.getElementById('keywords-content');
+            let html = '';
+
+            keywordsDB.forEach(kw => {
+                const words = kw.wordIds
+                    .map(id => wordDB.find(w => w.id === id))
+                    .filter(Boolean);
+
+                html += `
+                    <div class="keyword-category">
+                        <div class="keyword-category-title">${kw.keyword} | ${kw.english} <span style="font-size:0.85rem;color:#888;font-weight:normal;">(${words.length}词)</span></div>
+                        <div class="keyword-category-subtitle">${kw.description}</div>
+                        <div class="keyword-words-grid">
+                            ${words.map(w => `
+                                <div class="keyword-word-card">
+                                    <div class="kw-word">${w.word}</div>
+                                    <div class="kw-meaning">${w.meaning}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // ==================== 初始化 ====================
+        renderPhrasesPanel('all');
+        renderSuperHFPanel();
+        renderKeywordsPanel();
+        renderWordsPanel('all');
+
+        // ==================== 键盘导航 ====================
+
+        function getHubGridColumns(gridId) {
+            const grid = document.getElementById(gridId);
+            if (!grid) return 1;
+            const cards = grid.querySelectorAll('.word-card');
+            if (cards.length < 2) return 1;
+            const firstTop = cards[0].getBoundingClientRect().top;
+            let cols = 1;
+            for (let i = 1; i < cards.length; i++) {
+                if (Math.abs(cards[i].getBoundingClientRect().top - firstTop) < 2) cols++;
+                else break;
+            }
+            return cols || 1;
+        }
+
+        function moveHubCursor(gridId, cursorRef, list, delta) {
+            if (list.length === 0) return [0, false];
+            let newIdx = cursorRef + delta;
+            if (newIdx < 0) newIdx = 0;
+            if (newIdx >= list.length) newIdx = list.length - 1;
+            const grid = document.getElementById(gridId);
+            const cards = grid.querySelectorAll('.word-card');
+            cards.forEach((c, i) => c.classList.toggle('word-lib-selected', i === newIdx));
+            if (cards[newIdx]) cards[newIdx].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            return [newIdx, true];
+        }
+
+        document.addEventListener('keydown', e => {
+            const activePanel = document.querySelector('.hub-panel.active');
+            if (!activePanel) return;
+            const pid = activePanel.id;
+
+            if (pid === 'panel-words') {
+                const key = e.key.toUpperCase();
+                if (key === 'W' || key === 'ARROWUP') { e.preventDefault(); [hubWordsCursor] = moveHubCursor('words-grid', hubWordsCursor, hubWordsFiltered, -getHubGridColumns('words-grid')); }
+                else if (key === 'S' || key === 'ARROWDOWN') { e.preventDefault(); [hubWordsCursor] = moveHubCursor('words-grid', hubWordsCursor, hubWordsFiltered, getHubGridColumns('words-grid')); }
+                else if (key === 'A' || key === 'ARROWLEFT') { e.preventDefault(); [hubWordsCursor] = moveHubCursor('words-grid', hubWordsCursor, hubWordsFiltered, -1); }
+                else if (key === 'D' || key === 'ARROWRIGHT') { e.preventDefault(); [hubWordsCursor] = moveHubCursor('words-grid', hubWordsCursor, hubWordsFiltered, 1); }
+                else if (key === 'J') {
+                    e.preventDefault();
+                    if (hubWordsFiltered[hubWordsCursor]) {
+                        const word = hubWordsFiltered[hubWordsCursor];
+                        import('./js/core.js').then(c => c.addToUnfamiliar(word));
+                        alert('已加入不熟词库: ' + word.word);
+                    }
+                } else if (key === 'Q') {
+                    e.preventDefault();
+                    const cats = ['all','noun','verb','adjective','adverb','preposition','academic','daily','technology','economy','society','emotion','basic','intermediate','advanced'];
+                    let ci = cats.indexOf(hubWordsFilterType) - 1;
+                    if (ci < 0) ci = cats.length - 1;
+                    hubWordsFilterType = cats[ci];
+                    renderWordsPanel(hubWordsFilterType);
+                } else if (key === 'E') {
+                    e.preventDefault();
+                    const cats = ['all','noun','verb','adjective','adverb','preposition','academic','daily','technology','economy','society','emotion','basic','intermediate','advanced'];
+                    let ci = cats.indexOf(hubWordsFilterType) + 1;
+                    if (ci >= cats.length) ci = 0;
+                    hubWordsFilterType = cats[ci];
+                    renderWordsPanel(hubWordsFilterType);
+                }
+            } else if (pid === 'panel-super-hf') {
+                const key = e.key.toUpperCase();
+                if (key === 'W' || key === 'ARROWUP') { e.preventDefault(); [hubSHFCursor] = moveHubCursor('super-hf-grid', hubSHFCursor, hubSHFWords, -getHubGridColumns('super-hf-grid')); }
+                else if (key === 'S' || key === 'ARROWDOWN') { e.preventDefault(); [hubSHFCursor] = moveHubCursor('super-hf-grid', hubSHFCursor, hubSHFWords, getHubGridColumns('super-hf-grid')); }
+                else if (key === 'A' || key === 'ARROWLEFT') { e.preventDefault(); [hubSHFCursor] = moveHubCursor('super-hf-grid', hubSHFCursor, hubSHFWords, -1); }
+                else if (key === 'D' || key === 'ARROWRIGHT') { e.preventDefault(); [hubSHFCursor] = moveHubCursor('super-hf-grid', hubSHFCursor, hubSHFWords, 1); }
+                else if (key === 'J') {
+                    e.preventDefault();
+                    if (hubSHFWords[hubSHFCursor]) {
+                        import('./js/core.js').then(c => c.addToUnfamiliar(hubSHFWords[hubSHFCursor]));
+                        alert('已加入不熟词库: ' + hubSHFWords[hubSHFCursor].word);
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CET-6 六级高频词汇 &amp; 翻译分类完全指南（完整版）</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --border: #334155;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #38bdf8;
+    --a2: #a78bfa;  --a3: #34d399;  --a4: #f472b6;
+    --a5: #fb923c;  --a6: #fbbf24;  --a7: #f87171;
+    --verb: #ef4444; --noun: #3b82f6; --adj: #10b981; --adv: #f59e0b;
+    --tag-bg: #1e293b;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.7; min-height: 100vh;
+  }
+  .header {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #1a1a2e 100%);
+    border-bottom: 1px solid var(--border); padding: 32px 24px; text-align: center;
+    position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px);
+  }
+  .header h1 {
+    font-size: 2rem; font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--a2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .header p { color: var(--muted); margin-top: 6px; font-size: 0.95rem; }
+  .nav {
+    display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+    padding: 16px 24px; background: var(--card); border-bottom: 1px solid var(--border);
+    position: sticky; top: 96px; z-index: 99;
+  }
+  .nav button {
+    padding: 8px 18px; border: 1px solid var(--border); background: transparent;
+    color: var(--muted); border-radius: 20px; cursor: pointer; font-size: 0.88rem;
+    transition: all 0.2s; white-space: nowrap;
+  }
+  .nav button:hover { border-color: var(--accent); color: var(--accent); }
+  .nav button.active { background: var(--accent); color: #0f172a; border-color: var(--accent); font-weight: 700; }
+  .main { max-width: 1300px; margin: 0 auto; padding: 24px; }
+  .section { display: none; }
+  .section.active { display: block; }
+  .stats-row {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 180px));
+    gap: 12px; margin-bottom: 28px;
+  }
+  .stat-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px; text-align: center;
+  }
+  .stat-card .num { font-size: 2rem; font-weight: 800; }
+  .stat-card .label { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+  .stat-card.verb .num { color: var(--verb); }
+  .stat-card.noun .num { color: var(--noun); }
+  .stat-card.adj  .num { color: var(--adj); }
+  .stat-card.adv  .num { color: var(--adv); }
+  .word-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 8px; }
+  .word-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+    transition: border-color 0.2s; cursor: default;
+  }
+  .word-card:hover { border-color: var(--accent); }
+  .word-card .idx {
+    width: 26px; height: 26px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 700; flex-shrink: 0; color: #fff;
+  }
+  .word-card.verb .idx { background: var(--verb); }
+  .word-card.noun .idx { background: var(--noun); }
+  .word-card.adj  .idx { background: var(--adj); }
+  .word-card.adv  .idx { background: var(--adv); }
+  .word-card .en { font-weight: 700; font-size: 0.95rem; min-width: 100px; }
+  .word-card .zh { color: var(--muted); font-size: 0.82rem; }
+  .pos-badge {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+  }
+  .pos-badge.v { background: rgba(239,68,68,.15); color: var(--verb); }
+  .pos-badge.n { background: rgba(59,130,246,.15); color: var(--noun); }
+  .pos-badge.adj { background: rgba(16,185,129,.15); color: var(--adj); }
+  .pos-badge.adv { background: rgba(245,158,11,.15); color: var(--adv); }
+  .cat-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+  .cat-header .cat-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center; font-size: 1.6rem;
+  }
+  .cat-header h2 { font-size: 1.5rem; }
+  .cat-header .cat-desc { color: var(--muted); font-size: 0.9rem; width: 100%; }
+  .cat-icon.cul { background: rgba(168,85,247,.15); color: var(--a2); }
+  .cat-icon.eco { background: rgba(34,211,238,.15); color: var(--accent); }
+  .cat-icon.soc { background: rgba(244,114,182,.15); color: var(--a4); }
+  .cat-icon.edu { background: rgba(52,211,153,.15); color: var(--a3); }
+  .cat-icon.tec { background: rgba(251,146,60,.15); color: var(--a5); }
+  .cat-icon.env { background: rgba(251,191,36,.15); color: var(--a6); }
+  .cat-icon.pol { background: rgba(248,113,113,.15); color: var(--a7); }
+  .subsection {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px 24px; margin-bottom: 20px;
+  }
+  .subsection h3 { font-size: 1.1rem; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .subsection h3 .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .tag-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag {
+    background: var(--tag-bg); border: 1px solid var(--border); border-radius: 16px;
+    padding: 7px 14px; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;
+  }
+  .tag .en { font-weight: 700; }
+  .tag .zh { color: var(--muted); font-size: 0.78rem; }
+  .tag.proper { border-color: rgba(168,85,247,.3); background: rgba(168,85,247,.08); }
+  .tag.hot { border-color: rgba(248,113,113,.35); background: rgba(248,113,113,.08); }
+  .sentence-block {
+    background: rgba(15,23,42,.5); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 20px; margin-bottom: 10px;
+  }
+  .sentence-block .cn { color: var(--muted); font-size: 0.88rem; margin-bottom: 6px; }
+  .sentence-block .en { font-size: 0.93rem; font-style: italic; color: #e2e8f0; line-height: 1.6; }
+  .sentence-block .en .hl { color: var(--accent); font-weight: 600; font-style: normal; }
+  .highlight-box {
+    background: rgba(56,189,248,.08); border: 1px solid rgba(56,189,248,.25);
+    border-radius: 10px; padding: 14px 18px; margin-top: 12px; font-size: 0.85rem;
+  }
+  .highlight-box strong { color: var(--accent); }
+  .sub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; margin-top: 8px; }
+  .sub-box {
+    background: rgba(15,23,42,.5); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 18px;
+  }
+  .sub-box h4 { font-size: 0.95rem; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .sub-box h4 .sd { width: 6px; height: 6px; border-radius: 50%; }
+  .footer {
+    text-align: center; padding: 32px; color: var(--muted); font-size: 0.82rem;
+    border-top: 1px solid var(--border); margin-top: 40px;
+  }
+  .collapsible summary {
+    cursor: pointer; font-weight: 600; padding: 4px 0; color: var(--accent);
+  }
+  .collapsible summary:hover { color: var(--a2); }
+  @media (max-width: 640px) {
+    .header h1 { font-size: 1.4rem; }
+    .nav button { padding: 6px 12px; font-size: 0.78rem; }
+    .word-grid { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .sub-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <h1>&#x1F4DA; CET-6 六级高频词汇 &amp; 翻译分类完全指南（完整版）</h1>
+  <p>基于近10年四六级真题语料库 | 高频200词 + 翻译七大分类 | 碳中和·AI·一带一路·改革开放全覆盖 | 2026年6月备考版</p>
+</header>
+
+<nav class="nav">
+  <button class="active" data-tab="tab-highfreq">&#x1F525; 高频200词</button>
+  <button data-tab="tab-culture">&#x1F3EE; 文化类</button>
+  <button data-tab="tab-politics">&#x1F3DB; 政治类</button>
+  <button data-tab="tab-economy">&#x1F4B0; 经济类</button>
+  <button data-tab="tab-society">&#x1F3D9; 社会类</button>
+  <button data-tab="tab-education">&#x1F393; 教育类</button>
+  <button data-tab="tab-technology">&#x1F680; 科技类</button>
+  <button data-tab="tab-ecology">&#x1F33F; 生态类</button>
+  <button data-tab="tab-summary">&#x1F4CB; 总览</button>
+</nav>
+
+<main class="main">
+
+<!-- ========== TAB: 高频200词 ========== -->
+<section class="section active" id="tab-highfreq">
+  <div class="stats-row">
+    <div class="stat-card verb"><div class="num">65</div><div class="label">&#x1F534; 动词 Verbs</div></div>
+    <div class="stat-card noun"><div class="num">75</div><div class="label">&#x1F535; 名词 Nouns</div></div>
+    <div class="stat-card adj"><div class="num">60</div><div class="label">&#x1F7E2; 形容词 Adj.</div></div>
+    <div class="stat-card adv"><div class="num">16</div><div class="label">&#x1F7E1; 副词 Adv.</div></div>
+  </div>
+  <h2 style="margin-bottom:14px;">&#x1F534; 高频动词（65个）</h2>
+  <div class="word-grid" id="verb-grid"></div>
+  <h2 style="margin:32px 0 14px;">&#x1F535; 高频名词（75个）</h2>
+  <div class="word-grid" id="noun-grid"></div>
+  <h2 style="margin:32px 0 14px;">&#x1F7E2; 高频形容词（60个）</h2>
+  <div class="word-grid" id="adj-grid"></div>
+  <h2 style="margin:32px 0 14px;">&#x1F7E1; 高频副词（16个）</h2>
+  <div class="word-grid" id="adv-grid"></div>
+</section>
+
+<!-- ========== TAB: 文化类 ========== -->
+<section class="section" id="tab-culture">
+  <div class="cat-header">
+    <div class="cat-icon cul">&#x1F3EE;</div>
+    <div><h2>第一类：中国文化与历史</h2><p class="cat-desc">传统文化 · 节日 · 文化遗产 · 历史遗迹 — 六级翻译最高频话题 &#x2B50;&#x2B50;&#x2B50;&#x2B50;&#x2B50;</p></div>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--a2)"></span>核心词汇（描述性/通用）</h3>
+    <div class="tag-list" id="culture-core"></div>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--a4)"></span>专有名词 / 术语</h3>
+    <div class="tag-list" id="culture-proper"></div>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--a3)"></span>经典翻译句子模板（7句）</h3>
+    <div class="sentence-block">
+      <div class="cn">1. 中国传统文化源远流长，可以追溯到几千年前。</div>
+      <div class="en"><span class="hl">Traditional Chinese culture</span> <span class="hl">has a long history</span>, <span class="hl">dating back to</span> thousands of years ago.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">2. 春节是中国最重要的传统节日，人们会与家人团聚，共度佳节。贴春联、放鞭炮、吃团圆饭是必不可少的习俗。</div>
+      <div class="en"><span class="hl">The Spring Festival</span> is the most important traditional festival in China, during which people <span class="hl">reunite with</span> their families. <span class="hl">Pasting couplets</span>, <span class="hl">setting off firecrackers</span> and <span class="hl">having a family reunion dinner</span> are indispensable customs.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">3. 京剧被誉为中国的"国粹"，融合了音乐、舞蹈、美术和武术等多种艺术形式。</div>
+      <div class="en"><span class="hl">Peking Opera</span>, known as the "<span class="hl">national essence</span>" of China, <span class="hl">integrates</span> various art forms such as music, dance, fine arts and martial arts.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">4. 丝绸之路促进了中国与西方国家之间的贸易和文化交流。</div>
+      <div class="en"><span class="hl">The Silk Road</span> <span class="hl">facilitated</span> trade and <span class="hl">cultural exchanges</span> between China and Western countries.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">5. 儒家思想深刻地影响了中国的社会结构和道德观念，强调仁、义、礼、智、信五种美德。</div>
+      <div class="en"><span class="hl">Confucianism</span> has profoundly <span class="hl">influenced</span> China's social structure and moral values, emphasizing the five virtues of <span class="hl">benevolence, righteousness, propriety, wisdom and trustworthiness</span>.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">6. 非物质文化遗产的保护与传承对于维护文化多样性具有重要意义。</div>
+      <div class="en">The protection and <span class="hl">inheritance</span> of <span class="hl">intangible cultural heritage</span> is of great significance to maintaining <span class="hl">cultural diversity</span>.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">7. 中国的四大发明——造纸术、印刷术、火药和指南针——对世界文明产生了深远的影响。</div>
+      <div class="en">China's <span class="hl">Four Great Inventions</span> — <span class="hl">papermaking, printing, gunpowder and the compass</span> — have exerted a <span class="hl">profound impact on</span> world civilization.</div>
+    </div>
+    <div class="highlight-box"><strong>&#x1F4A1; 翻译技巧：</strong>文化类翻译常用 <em>"has a long history"</em>（历史悠久）、<em>"dates back to"</em>（追溯到）、<em>"be known as"</em>（被誉为）、<em>"symbolize"</em>（象征）、<em>"inherit/pass down"</em>（传承）、<em>"have a profound impact on"</em>（深远影响）。</div>
+  </div>
+</section>
+
+<!-- ========== TAB: 政治类 ========== -->
+<section class="section" id="tab-politics">
+  <div class="cat-header">
+    <div class="cat-icon pol">&#x1F3DB;</div>
+    <div><h2>第七类：政治与时政（新增）</h2><p class="cat-desc">国家政策 · 中国特色社会主义 · 中国梦 · 一带一路 — 近年考频上升 &#x2B50;&#x2B50;&#x2B50;&#x2B50;</p></div>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--a7)"></span>核心词汇</h3>
+    <div class="tag-list" id="politics-core"></div>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--a4)"></span>专有名词 / 术语（官方标准译法）</h3>
+    <div class="tag-list" id="politics-proper"></div>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--a3)"></span>经典翻译句子模板（5句）</h3>
+    <div class="sentence-block">
+      <div class="cn">1. 改革开放以来，中国发生了翻天覆地的变化，综合国力显著增强。</div>
+      <div class="en">Since the <span class="hl">reform and opening-up</span>, China has undergone <span class="hl">earth-shaking changes</span>, with its <span class="hl">overall national strength</span> significantly enhanced.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">2. "一带一路"倡议促进了沿线国家的基础设施建设和经济发展。</div>
+      <div class="en">The <span class="hl">Belt and Road Initiative</span> has promoted <span class="hl">infrastructure construction</span> and economic development in countries <span class="hl">along the routes</span>.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">3. 中国政府坚持走和平发展道路，推动构建人类命运共同体。</div>
+      <div class="en">The Chinese government adheres to the path of <span class="hl">peaceful development</span> and promotes the building of a <span class="hl">community with a shared future for mankind</span>.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">4. 实现中华民族伟大复兴的中国梦，是全体中国人民的共同愿望。</div>
+      <div class="en">Realizing the <span class="hl">Chinese Dream</span> of the <span class="hl">great rejuvenation of the Chinese nation</span> is the common aspiration of all Chinese people.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">5. 中国坚持中国特色社会主义道路，全面推进中国式现代化建设。</div>
+      <div class="en">China adheres to the path of <span class="hl">socialism with Chinese characteristics</span> and comprehensively advances <span class="hl">Chinese-style modernization</span>.</div>
+    </div>
+    <div class="highlight-box"><strong>&#x1F4A1; 翻译技巧：</strong>政治类翻译务必使用<strong>官方标准译法</strong>，不可自由发挥。常用表达：<em>"adhere to"</em>（坚持）、<em>"promote"</em>（推进/促进）、<em>"comprehensively advance"</em>（全面推进）、<em>"play an important role in"</em>（发挥重要作用）。</div>
+  </div>
+</section>
+
+<!-- ========== TAB: 经济类 ========== -->
+<section class="section" id="tab-economy">
+  <div class="cat-header">
+    <div class="cat-icon eco">&#x1F4B0;</div>
+    <div><h2>第二类：经济发展与建设</h2><p class="cat-desc">经济增长 · 改革开放 · 贸易 · 数字经济 · 平台经济 — 考频持续上升 &#x2B50;&#x2B50;&#x2B50;&#x2B50;</p></div>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--accent)"></span>核心词汇</h3>
+    <div class="tag-list" id="economy-core"></div>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--a4)"></span>专有名词 / 术语</h3>
+    <div class="tag-list" id="economy-proper"></div>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--a3)"></span>经典翻译句子模板（5句）</h3>
+    <div class="sentence-block">
+      <div class="cn">1. 改革开放以来，中国经济经历了飞速发展，数亿人口摆脱了贫困。</div>
+      <div class="en">Since the <span class="hl">reform and opening-up</span>, China's economy has <span class="hl">undergone rapid development</span>, lifting hundreds of millions of people <span class="hl">out of poverty</span>.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">2. 中国已成为世界第二大经济体，在全球经济中扮演着越来越重要的角色。</div>
+      <div class="en">China has become the world's <span class="hl">second-largest economy</span>, playing an <span class="hl">increasingly important role</span> in the global economy.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">3. 电子商务和数字经济的蓬勃发展极大地改变了人们的消费习惯和生活方式。</div>
+      <div class="en">The <span class="hl">booming development</span> of <span class="hl">e-commerce</span> and the <span class="hl">digital economy</span> has greatly <span class="hl">transformed</span> people's <span class="hl">consumption habits</span> and <span class="hl">lifestyles</span>.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">4. 供给侧结构性改革是中国经济实现高质量发展的关键举措。</div>
+      <div class="en"><span class="hl">Supply-side structural reform</span> is a key measure for China's economy to achieve <span class="hl">high-quality development</span>.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">5. 共同富裕是中国式现代化的重要特征，需要逐步缩小城乡和区域差距。</div>
+      <div class="en"><span class="hl">Common prosperity</span> is an important feature of <span class="hl">Chinese-style modernization</span>, requiring the gradual narrowing of the <span class="hl">urban-rural gap</span> and <span class="hl">regional disparities</span>.</div>
+    </div>
+    <div class="highlight-box"><strong>&#x1F4A1; 翻译技巧：</strong>经济类翻译常用 <em>"undergo rapid development"</em>（经历快速发展）、<em>"play an important role in"</em>（发挥重要作用）、<em>"promote/facilitate"</em>（促进）、<em>"contribute to"</em>（有助于）、<em>"achieve high-quality development"</em>（实现高质量发展）。</div>
+  </div>
+</section>
+
+<!-- ========== TAB: 社会类 ========== -->
+<section class="section" id="tab-society">
+  <div class="cat-header">
+    <div class="cat-icon soc">&#x1F3D9;</div>
+    <div><h2>第三类：社会发展与民生</h2><p class="cat-desc">人口 · 城镇化 · 社会保障 · 就业 · 扶贫 — 高频常考 &#x2B50;&#x2B50;&#x2B50;&#x2B50;</p></div>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--a4)"></span>核心词汇</h3>
+    <div class="tag-list" id="society-core"></div>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--a4)"></span>专有名词 / 术语</h3>
+    <div class="tag-list" id="society-proper"></div>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--a3)"></span>经典翻译句子模板（5句）</h3>
+    <div class="sentence-block">
+      <div class="cn">1. 随着城镇化进程加快，越来越多的人口从农村迁移到城市。</div>
+      <div class="en">With the <span class="hl">acceleration of urbanization</span>, an increasing number of people have <span class="hl">migrated from</span> rural areas to cities.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">2. 人口老龄化是中国社会面临的一大挑战，需要完善的社会保障体系来应对。</div>
+      <div class="en">The <span class="hl">aging population</span> is a major <span class="hl">challenge</span> facing Chinese society, which requires a comprehensive <span class="hl">social security system</span> to address.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">3. 近年来，政府采取了一系列措施来缩小城乡差距，改善民生。</div>
+      <div class="en">In recent years, the government has <span class="hl">adopted a series of measures</span> to <span class="hl">narrow the urban-rural gap</span> and <span class="hl">improve people's livelihoods</span>.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">4. 精准扶贫政策的实施帮助数千万农村贫困人口摆脱了绝对贫困。</div>
+      <div class="en">The implementation of the <span class="hl">targeted poverty alleviation</span> policy has helped tens of millions of rural poor <span class="hl">shake off absolute poverty</span>.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">5. 乡村振兴战略旨在促进农村经济、文化、生态的全面发展。</div>
+      <div class="en">The <span class="hl">rural revitalization</span> strategy aims to promote the comprehensive development of rural economy, culture and <span class="hl">ecology</span>.</div>
+    </div>
+    <div class="highlight-box"><strong>&#x1F4A1; 翻译技巧：</strong>社会类翻译注意 <em>"aging population"</em>（人口老龄化，不是old population）、<em>"targeted poverty alleviation"</em>（精准扶贫，不是 precise poverty）、<em>"rural revitalization"</em>（乡村振兴，官译）。</div>
+  </div>
+</section>
+
+<!-- ========== TAB: 教育类 ========== -->
+<section class="section" id="tab-education">
+  <div class="cat-header">
+    <div class="cat-icon edu">&#x1F393;</div>
+    <div><h2>第四类：教育与人才培养</h2><p class="cat-desc">义务教育 · 高等教育 · 高考 · 留学 · 素质教育 · 文化自信 &#x2B50;&#x2B50;&#x2B50;</p></div>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--a3)"></span>核心词汇</h3>
+    <div class="tag-list" id="education-core"></div>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--a4)"></span>专有名词 / 术语</h3>
+    <div class="tag-list" id="education-proper"></div>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--a3)"></span>经典翻译句子模板（4句）</h3>
+    <div class="sentence-block">
+      <div class="cn">1. 中国政府高度重视教育，实行九年义务教育制度，确保每个孩子都有接受基础教育的机会。</div>
+      <div class="en">The Chinese government <span class="hl">attaches great importance to</span> education and implements a <span class="hl">nine-year compulsory education</span> system to ensure that every child <span class="hl">has access to</span> basic education.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">2. 近年来，越来越多的中国学生选择出国留学，以拓宽视野、提升自身竞争力。</div>
+      <div class="en">In recent years, an increasing number of Chinese students have chosen to <span class="hl">study abroad</span> to <span class="hl">broaden their horizons</span> and <span class="hl">enhance their competitiveness</span>.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">3. 高考是中国最重要的人才选拔考试，每年有数百万考生参加。</div>
+      <div class="en">The <span class="hl">Gaokao</span> is China's most important <span class="hl">talent selection examination</span>, with millions of <span class="hl">candidates</span> taking it each year.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">4. 提倡素质教育，培养学生的创新精神和批判性思维能力，已成为教育改革的重要方向。</div>
+      <div class="en">Advocating <span class="hl">quality-oriented education</span> and cultivating students' <span class="hl">innovative spirit</span> and <span class="hl">critical thinking</span> ability have become an important direction of educational reform.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== TAB: 科技类 ========== -->
+<section class="section" id="tab-technology">
+  <div class="cat-header">
+    <div class="cat-icon tec">&#x1F680;</div>
+    <div><h2>第五类：科技进步与创新</h2><p class="cat-desc">人工智能 · 5G · 高铁 · 数字经济 · 新媒体 · 航天 &#x2B50;&#x2B50;&#x2B50;&#x2B50;</p></div>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--a5)"></span>核心词汇</h3>
+    <div class="tag-list" id="technology-core"></div>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--a4)"></span>专有名词 / 术语</h3>
+    <div class="tag-list" id="technology-proper"></div>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--a5)"></span>AI &amp; 数字科技专项词汇</h3>
+    <div class="tag-list" id="technology-ai"></div>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--a3)"></span>经典翻译句子模板（5句）</h3>
+    <div class="sentence-block">
+      <div class="cn">1. 中国在高铁、5G通信和人工智能等领域取得了举世瞩目的成就。</div>
+      <div class="en">China has made <span class="hl">remarkable achievements</span> in areas such as <span class="hl">high-speed rail</span>, <span class="hl">5G communications</span> and <span class="hl">artificial intelligence (AI)</span>.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">2. 移动支付在中国的普及程度极高，人们只需一部手机就可以完成日常生活中的大部分交易。</div>
+      <div class="en"><span class="hl">Mobile payment</span> is so <span class="hl">widespread</span> in China that people can complete most daily <span class="hl">transactions</span> with just a <span class="hl">smartphone</span>.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">3. 人工智能正以前所未有的速度改变着社会生产和生活方式，已广泛应用于医疗、教育、交通等领域。</div>
+      <div class="en"><span class="hl">Artificial intelligence</span> is transforming social production and lifestyles at an <span class="hl">unprecedented pace</span>, and has been widely applied in areas such as healthcare, education and transportation.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">4. 短视频和直播带货已成为中国数字经济的重要组成部分。</div>
+      <div class="en"><span class="hl">Short videos</span> and <span class="hl">livestreaming e-commerce</span> have become important components of China's <span class="hl">digital economy</span>.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">5. 中国自主研发的北斗导航系统已实现全球覆盖，为各国用户提供精准的定位服务。</div>
+      <div class="en">China's self-developed <span class="hl">Beidou Navigation System</span> has achieved <span class="hl">global coverage</span>, providing precise <span class="hl">positioning services</span> to users worldwide.</div>
+    </div>
+    <div class="highlight-box"><strong>&#x1F4A1; 翻译技巧：</strong>科技类注意术语准确性：AI第一次出现写全称 <em>"artificial intelligence (AI)"</em>；<em>"big data"</em> 不可数不加s；<em>"virtual reality (VR)"</em> 注意缩写格式。常用动词：<em>"transform/revolutionize"</em>（变革）、<em>"apply"</em>（应用）、<em>"develop"</em>（研发）、<em>"promote innovation"</em>（推动创新）。</div>
+  </div>
+</section>
+
+<!-- ========== TAB: 生态类 ========== -->
+<section class="section" id="tab-ecology">
+  <div class="cat-header">
+    <div class="cat-icon env">&#x1F33F;</div>
+    <div><h2>第六类：生态环境与绿色发展</h2><p class="cat-desc">碳中和 · 碳达峰 · 可再生能源 · 环境保护 · 新能源车 — 热门新增 &#x2B50;&#x2B50;&#x2B50;&#x2B50;</p></div>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--a6)"></span>核心词汇</h3>
+    <div class="tag-list" id="ecology-core"></div>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--a4)"></span>专有名词 / 术语</h3>
+    <div class="tag-list" id="ecology-proper"></div>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--a6)"></span>碳中和 &amp; 新能源专项词汇</h3>
+    <div class="tag-list" id="ecology-carbon"></div>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--a3)"></span>经典翻译句子模板（6句）</h3>
+    <div class="sentence-block">
+      <div class="cn">1. 中国政府提出了"绿水青山就是金山银山"的发展理念，大力推进生态文明建设。</div>
+      <div class="en">The Chinese government has put forward the concept that "<span class="hl">lucid waters and lush mountains are invaluable assets</span>," vigorously promoting <span class="hl">ecological civilization</span>.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">2. 中国承诺力争在2030年前实现碳达峰，在2060年前实现碳中和。</div>
+      <div class="en">China has pledged to peak <span class="hl">carbon emissions</span> before 2030 and achieve <span class="hl">carbon neutrality</span> by 2060.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">3. 垃圾分类已在许多中国城市推广实施，旨在减少环境污染，促进资源回收利用。</div>
+      <div class="en"><span class="hl">Waste sorting</span> has been <span class="hl">implemented</span> in many Chinese cities, aiming to reduce <span class="hl">environmental pollution</span> and promote <span class="hl">resource recycling</span>.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">4. 中国新能源汽车产销量连续十年位居全球第一，已成为全球最大的新能源汽车市场。</div>
+      <div class="en">China's <span class="hl">new energy vehicle (NEV)</span> production and sales have ranked first globally for ten consecutive years, making it the world's largest NEV market.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">5. 可再生能源——包括太阳能、风能和水电——在中国能源结构中的占比持续提升。</div>
+      <div class="en"><span class="hl">Renewable energy</span> — including <span class="hl">solar energy</span>, <span class="hl">wind power</span> and <span class="hl">hydropower</span> — accounts for an increasing share of China's <span class="hl">energy mix</span>.</div>
+    </div>
+    <div class="sentence-block">
+      <div class="cn">6. 应对全球气候变化需要世界各国的共同努力，《巴黎协定》为全球气候治理提供了基本框架。</div>
+      <div class="en"><span class="hl">Combating global climate change</span> requires joint efforts of all countries, and the <span class="hl">Paris Agreement</span> provides a basic framework for <span class="hl">global climate governance</span>.</div>
+    </div>
+    <div class="highlight-box"><strong>&#x1F4A1; 翻译技巧：</strong>生态类核心区分：<em>"carbon peak"</em>（碳达峰，peak作动词到达峰值）、<em>"carbon neutrality"</em>（碳中和，不是 carbon neutral 作名词用法）、<em>"new energy vehicle (NEV)"</em>（新能源汽车标准译法）、<em>"ecological civilization"</em>（生态文明，中国特色表述的固定翻译）。</div>
+  </div>
+</section>
+
+<!-- ========== TAB: 总览 ========== -->
+<section class="section" id="tab-summary">
+  <h2 style="margin-bottom:20px;">&#x1F4CB; 内容总览</h2>
+  <div class="stats-row">
+    <div class="stat-card verb"><div class="num" style="color:var(--text)">216</div><div class="label">高频词汇总数</div></div>
+    <div class="stat-card"><div class="num" style="color:var(--a2)">7</div><div class="label">翻译分类</div></div>
+    <div class="stat-card"><div class="num" style="color:var(--a3)">37+</div><div class="label">模板句子</div></div>
+    <div class="stat-card"><div class="num" style="color:var(--a5)">320+</div><div class="label">分类词汇</div></div>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--accent)"></span>高频216词构成（基于近10年真题语料库）</h3>
+    <table style="width:100%;border-collapse:collapse;margin-top:12px;">
+      <thead><tr style="border-bottom:1px solid var(--border);text-align:left;"><th style="padding:10px;">词性</th><th style="padding:10px;">数量</th><th style="padding:10px;">考试覆盖</th><th style="padding:10px;">代表词</th></tr></thead>
+      <tbody>
+        <tr style="border-bottom:1px solid rgba(51,65,85,.4);"><td style="padding:10px;"><span class="pos-badge v">动词</span></td><td style="padding:10px;font-weight:700;">65</td><td style="padding:10px;color:var(--muted);">听力/阅读/翻译/写作 全题型</td><td style="padding:10px;">achieve, analyze, promote, enhance, establish, transform</td></tr>
+        <tr style="border-bottom:1px solid rgba(51,65,85,.4);"><td style="padding:10px;"><span class="pos-badge n">名词</span></td><td style="padding:10px;font-weight:700;">75</td><td style="padding:10px;color:var(--muted);">阅读/翻译/写作 核心概念</td><td style="padding:10px;">environment, strategy, concept, opportunity, challenge, innovation</td></tr>
+        <tr style="border-bottom:1px solid rgba(51,65,85,.4);"><td style="padding:10px;"><span class="pos-badge adj">形容词</span></td><td style="padding:10px;font-weight:700;">60</td><td style="padding:10px;color:var(--muted);">阅读态度题/写作修饰</td><td style="padding:10px;">significant, specific, sustainable, effective, traditional</td></tr>
+        <tr><td style="padding:10px;"><span class="pos-badge adv">副词</span></td><td style="padding:10px;font-weight:700;">16</td><td style="padding:10px;color:var(--muted);">阅读逻辑/写作连接</td><td style="padding:10px;">increasingly, particularly, consequently, nevertheless</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--a2)"></span>六级翻译七大分类</h3>
+    <table style="width:100%;border-collapse:collapse;margin-top:12px;">
+      <thead><tr style="border-bottom:1px solid var(--border);text-align:left;"><th style="padding:10px;">分类</th><th style="padding:10px;">考频</th><th style="padding:10px;">核心话题</th><th style="padding:10px;">词汇/句子</th></tr></thead>
+      <tbody>
+        <tr style="border-bottom:1px solid rgba(51,65,85,.4);"><td style="padding:10px;">&#x1F3EE; 文化类</td><td style="padding:10px;color:var(--a2);font-weight:700;">&#x2B50;&#x2B50;&#x2B50;&#x2B50;&#x2B50;</td><td style="padding:10px;color:var(--muted);">传统节日、文化遗产、艺术形式、历史建筑、思想流派</td><td style="padding:10px;">45词+7句</td></tr>
+        <tr style="border-bottom:1px solid rgba(51,65,85,.4);"><td style="padding:10px;">&#x1F3DB; 政治类 &#x1F7E2;</td><td style="padding:10px;color:var(--a7);font-weight:700;">&#x2B50;&#x2B50;&#x2B50;&#x2B50;</td><td style="padding:10px;color:var(--muted);">中国特色社会主义、中国梦、一带一路、改革开放</td><td style="padding:10px;">30词+5句</td></tr>
+        <tr style="border-bottom:1px solid rgba(51,65,85,.4);"><td style="padding:10px;">&#x1F4B0; 经济类</td><td style="padding:10px;color:var(--accent);font-weight:700;">&#x2B50;&#x2B50;&#x2B50;&#x2B50;</td><td style="padding:10px;color:var(--muted);">经济增长、数字经济、共同富裕、平台经济</td><td style="padding:10px;">35词+5句</td></tr>
+        <tr style="border-bottom:1px solid rgba(51,65,85,.4);"><td style="padding:10px;">&#x1F3D9; 社会类</td><td style="padding:10px;color:var(--a4);font-weight:700;">&#x2B50;&#x2B50;&#x2B50;&#x2B50;</td><td style="padding:10px;color:var(--muted);">人口老龄化、城镇化、精准扶贫、乡村振兴</td><td style="padding:10px;">32词+5句</td></tr>
+        <tr style="border-bottom:1px solid rgba(51,65,85,.4);"><td style="padding:10px;">&#x1F393; 教育类</td><td style="padding:10px;color:var(--a3);font-weight:700;">&#x2B50;&#x2B50;&#x2B50;</td><td style="padding:10px;color:var(--muted);">义务教育、高考、留学、素质教育、文化自信</td><td style="padding:10px;">32词+4句</td></tr>
+        <tr style="border-bottom:1px solid rgba(51,65,85,.4);"><td style="padding:10px;">&#x1F680; 科技类</td><td style="padding:10px;color:var(--a5);font-weight:700;">&#x2B50;&#x2B50;&#x2B50;&#x2B50;</td><td style="padding:10px;color:var(--muted);">人工智能·大模型、5G、高铁、数字经济、新媒体</td><td style="padding:10px;">48词+5句</td></tr>
+        <tr><td style="padding:10px;">&#x1F33F; 生态类</td><td style="padding:10px;color:var(--a6);font-weight:700;">&#x2B50;&#x2B50;&#x2B50;&#x2B50;</td><td style="padding:10px;color:var(--muted);">碳中和·碳达峰、新能源车、可再生能源、垃圾分类</td><td style="padding:10px;">50词+6句</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="subsection">
+    <h3><span class="dot" style="background:var(--a7)"></span>&#x1F514; 本次新增内容</h3>
+    <table style="width:100%;border-collapse:collapse;margin-top:12px;">
+      <thead><tr style="border-bottom:1px solid var(--border);text-align:left;"><th style="padding:10px;">新增项</th><th style="padding:10px;">详情</th></tr></thead>
+      <tbody>
+        <tr style="border-bottom:1px solid rgba(51,65,85,.4);"><td style="padding:10px;">&#x1F3DB; 政治类</td><td style="padding:10px;color:var(--muted);">全新分类：中国特色社会主义、中国梦、一带一路、改革开放、人类命运共同体、中国式现代化等30个核心词汇及官方译法</td></tr>
+        <tr style="border-bottom:1px solid rgba(51,65,85,.4);"><td style="padding:10px;">&#x1F33F; 碳中和专项</td><td style="padding:10px;color:var(--muted);">碳达峰、碳中和、碳排放、碳交易、新能源车(NEV)、光伏、风电、氢能、储能、充电桩等</td></tr>
+        <tr style="border-bottom:1px solid rgba(51,65,85,.4);"><td style="padding:10px;">&#x1F680; AI/科技专项</td><td style="padding:10px;color:var(--muted);">人工智能(AI)、大语言模型、ChatGPT、区块链、元宇宙、VR/AR、算法推荐、数据隐私、人脸识别、自动驾驶等</td></tr>
+        <tr style="border-bottom:1px solid rgba(51,65,85,.4);"><td style="padding:10px;">&#x1F4B0; 数字经济</td><td style="padding:10px;color:var(--muted);">数字经济、平台经济、移动支付、短视频、直播带货、共享经济、跨境电商、供应链等</td></tr>
+        <tr style="border-bottom:1px solid rgba(51,65,85,.4);"><td style="padding:10px;">&#x1F3D9; 社会/扶贫</td><td style="padding:10px;color:var(--muted);">精准扶贫、乡村振兴、共同富裕、户籍制度、三孩政策、双减政策、社会信用体系等</td></tr>
+        <tr><td style="padding:10px;">&#x1F4DD; 句子模板</td><td style="padding:10px;color:var(--muted);">从18句扩充至37+句，覆盖所有七大分类</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="highlight-box">
+    <strong>&#x1F4CC; 备考建议：</strong><br>
+    &#x2460; 优先背诵高频216词中的<strong>动词</strong>（听力/阅读/翻译/写作四大题型最高频）；<br>
+    &#x2461; 翻译部分重点掌握<strong>中国文化类</strong>和<strong>政治/时政类</strong>（近年考频最高、新增考点最多）；<br>
+    &#x2462; <strong>碳中和·碳达峰</strong>和<strong>人工智能</strong>是2024-2026年最热门翻译话题，务必专项掌握；<br>
+    &#x2463; 专有名词务必记准<strong>官方标准译法</strong>（如 the Belt and Road Initiative, carbon neutrality 等），不可自由发挥；<br>
+    &#x2464; 模板句背诵后多加模仿造句，考试时可直接套用。
+  </div>
+</section>
+
+</main>
+<footer class="footer">
+  CET-6 六级高频词汇 &amp; 翻译分类完全指南（完整版） | 基于新东方/沪江/China Daily等权威来源整理 | 碳中和·AI·一带一路·改革开放全覆盖 | 2026年6月备考版
+</footer>
+
+<script>
+// ========== HIGH-FREQ WORDS ==========
+const verbs = [
+  {en:"absorb",zh:"吸收；使全神贯注"},{en:"melt",zh:"(使)融化；(使)消散"},
+  {en:"scratch",zh:"抓；刮擦"},{en:"halt",zh:"停住，暂停"},
+  {en:"glimpse",zh:"一瞥"},{en:"squeeze",zh:"挤，挤出；压榨"},
+  {en:"resent",zh:"对...表示忿恨"},{en:"prohibit",zh:"禁止"},
+  {en:"stir",zh:"搅拌；打动"},{en:"conquer",zh:"征服；破除"},
+  {en:"scatter",zh:"撒；使散开；消散"},{en:"manufacture",zh:"制造"},
+  {en:"dominate",zh:"支配；耸立于"},{en:"disperse",zh:"分散，消散"},
+  {en:"entertain",zh:"款待，给…娱乐"},{en:"consent",zh:"同意"},
+  {en:"replace",zh:"取代，更换"},{en:"update",zh:"更新，使现代化"},
+  {en:"cherish",zh:"珍爱；抚育；怀有"},{en:"spin",zh:"旋转，晕眩"},
+  {en:"twist",zh:"使缠绕；扭伤"},{en:"heal",zh:"愈合，使康复"},
+  {en:"chill",zh:"使变冷"},{en:"rob",zh:"抢劫，盗窃"},
+  {en:"flash",zh:"闪烁；飞驰"},{en:"slip",zh:"滑，溜走，下降"},
+  {en:"cruise",zh:"航游"},{en:"orient",zh:"使适应；使朝向"},
+  {en:"weave",zh:"织，编"},{en:"breed",zh:"繁殖；养育，酿成"},
+  {en:"divorce",zh:"离婚；分离"},{en:"blend",zh:"(使)混和"},
+  {en:"flee",zh:"逃走；避开"},{en:"exchange",zh:"交换，兑换"},
+  {en:"volunteer",zh:"自愿"},{en:"modernize",zh:"(使)现代化"},
+  {en:"locate",zh:"探明，找出；使坐落于"},{en:"alter",zh:"改变"},
+  {en:"reclaim",zh:"要回；开垦；回收"},{en:"cultivate",zh:"耕作；培养"},
+  {en:"emerge",zh:"出现；暴露"},{en:"abuse",zh:"滥用，虐待，辱骂"},
+  {en:"discharge",zh:"允许...离开；排出"},{en:"involve",zh:"包含；使卷入"},
+  {en:"generate",zh:"产生；引起"},{en:"affect",zh:"影响"},
+  {en:"maintain",zh:"维持；维修"},{en:"establish",zh:"建立，确定"},
+  {en:"pursue",zh:"继续；追赶；追求"},{en:"enhance",zh:"提高，增加"},
+  {en:"reinforce",zh:"增强"},{en:"shift",zh:"转移；转变"},
+  {en:"contrast",zh:"对比"},{en:"invest",zh:"投资；投入"},
+  {en:"deprive",zh:"剥夺"},{en:"confirm",zh:"证实；确认"},
+  {en:"assure",zh:"使确信；确保"},{en:"impose",zh:"强加于；征(税)"},
+  {en:"decline",zh:"下降；谢绝"},{en:"transform",zh:"改变，转变"},
+  {en:"implement",zh:"实施，执行"},{en:"promote",zh:"促进；推广"},
+  {en:"facilitate",zh:"促进；使便利"},{en:"integrate",zh:"融合，整合"},
+  {en:"accelerate",zh:"加速"},{en:"adapt",zh:"适应；改编"}
+];
+
+const nouns = [
+  {en:"transmission",zh:"播送；传送，传染"},{en:"sketch",zh:"草图；梗概；素描"},
+  {en:"tension",zh:"紧张、绷紧；张力"},{en:"climate",zh:"气候；风气"},
+  {en:"wit",zh:"风趣；智力；才智"},{en:"riot",zh:"暴乱"},
+  {en:"ally",zh:"同盟者"},{en:"penalty",zh:"处罚，罚金"},
+  {en:"diagram",zh:"图解，简图，图表"},{en:"supplement",zh:"增补(物)"},
+  {en:"transportation",zh:"运输"},{en:"spite",zh:"恶意，怨恨"},
+  {en:"mess",zh:"凌乱状态；困境"},{en:"media",zh:"新闻媒介"},
+  {en:"selection",zh:"选择"},{en:"origin",zh:"起源；出身"},
+  {en:"argument",zh:"争论；论据"},{en:"conjunction",zh:"连接，联合"},
+  {en:"shelter",zh:"掩蔽处，住所"},{en:"persuasion",zh:"说服，信念"},
+  {en:"pace",zh:"(一)步，速度"},{en:"injury",zh:"损害；受伤"},
+  {en:"element",zh:"元素；成分；基础"},{en:"creation",zh:"创造；产物"},
+  {en:"freight",zh:"货物"},{en:"rail",zh:"栏杆；铁轨；铁路"},
+  {en:"route",zh:"路线，路程"},{en:"occasion",zh:"时刻，场合"},
+  {en:"plot",zh:"故事情节，密谋"},{en:"chaos",zh:"混乱"},
+  {en:"veteran",zh:"老兵；老手"},{en:"rebel",zh:"反叛分子"},
+  {en:"resolution",zh:"决议，决心，解决"},{en:"appliance",zh:"器具"},
+  {en:"welfare",zh:"福利"},{en:"accent",zh:"口音；重音"},
+  {en:"pension",zh:"养老金"},{en:"fraction",zh:"小部分；分数"},
+  {en:"luxury",zh:"奢侈(品)"},{en:"consultant",zh:"顾问，会诊医师"},
+  {en:"barrier",zh:"栅栏，障碍，屏障"},{en:"survival",zh:"幸存；幸存者"},
+  {en:"violence",zh:"暴力；猛烈"},{en:"depression",zh:"抑郁；萧条(期)"},
+  {en:"environment",zh:"环境"},{en:"economy",zh:"经济"},
+  {en:"strategy",zh:"战略，策略"},{en:"campaign",zh:"运动；战役"},
+  {en:"resource",zh:"资源"},{en:"concept",zh:"概念，观念，思想"},
+  {en:"opportunity",zh:"机会"},{en:"authority",zh:"权力；官方；权威"},
+  {en:"challenge",zh:"挑战"},{en:"community",zh:"社区，团体"},
+  {en:"principle",zh:"原则，原理"},{en:"perspective",zh:"视角，观点"},
+  {en:"aspect",zh:"方面"},{en:"phenomenon",zh:"现象"},
+  {en:"impact",zh:"影响，冲击"},{en:"trend",zh:"趋势；时尚"},
+  {en:"factor",zh:"因素"},{en:"policy",zh:"政策；保险单"},
+  {en:"scholarship",zh:"奖学金；学问"},{en:"session",zh:"会议，集会"},
+  {en:"issue",zh:"问题；发行"},{en:"approach",zh:"方法；途径"},
+  {en:"feature",zh:"特色；面貌"},{en:"innovation",zh:"创新"},
+  {en:"infrastructure",zh:"基础设施"},{en:"governance",zh:"治理"},
+  {en:"civilization",zh:"文明"},{en:"diversity",zh:"多样性"},
+  {en:"heritage",zh:"遗产"},{en:"transformation",zh:"转型，变革"}
+];
+
+const adjectives = [
+  {en:"offensive",zh:"冒犯的，攻击性的"},{en:"formal",zh:"正式的，形式上的"},
+  {en:"legal",zh:"法律(上)的；合法的"},{en:"superb",zh:"极好的，高质量的"},
+  {en:"helpful",zh:"有益的"},{en:"vertical",zh:"垂直的"},
+  {en:"nasty",zh:"令人讨厌的；严重的"},{en:"residential",zh:"居住的，住宅的"},
+  {en:"mere",zh:"仅仅的；纯粹的"},{en:"greedy",zh:"贪婪的；渴望的"},
+  {en:"magnificent",zh:"宏伟的；豪华的"},{en:"prominent",zh:"突出的，突起的"},
+  {en:"revolutionary",zh:"革命的"},{en:"elastic",zh:"有弹性的；灵活的"},
+  {en:"complicated",zh:"复杂的"},{en:"extensive",zh:"广阔的；广泛的"},
+  {en:"senior",zh:"资格较老的；年长的"},{en:"tragic",zh:"悲惨的，悲剧(性)的"},
+  {en:"tedious",zh:"乏味的"},{en:"heroic",zh:"英雄的，英勇的"},
+  {en:"financial",zh:"财政的，金融的"},{en:"traditional",zh:"传统的，惯例的"},
+  {en:"secure",zh:"安全的；牢固的"},{en:"gloomy",zh:"忧郁的；令人沮丧的"},
+  {en:"advanced",zh:"先进的；高级的"},{en:"civil",zh:"公民的；文明的"},
+  {en:"urban",zh:"城市的"},{en:"explicit",zh:"明晰的"},
+  {en:"effective",zh:"有效的"},{en:"typical",zh:"典型的"},
+  {en:"moral",zh:"道德的"},{en:"liberal",zh:"开明的；自由的"},
+  {en:"cooperative",zh:"有合作意向的"},{en:"constant",zh:"始终如一的"},
+  {en:"creative",zh:"有创造力的"},{en:"equivalent",zh:"相等的"},
+  {en:"overwhelming",zh:"势不可挡的"},{en:"fundamental",zh:"基本的"},
+  {en:"permanent",zh:"永久的，固定的"},{en:"potential",zh:"潜在的"},
+  {en:"significant",zh:"重要的，显著的"},{en:"specific",zh:"特定的，具体的"},
+  {en:"individual",zh:"个别的；独特的"},{en:"professional",zh:"职业的，专业的"},
+  {en:"responsible",zh:"需负责任的"},{en:"independent",zh:"独立的"},
+  {en:"considerable",zh:"相当大的"},{en:"efficient",zh:"效率高的"},
+  {en:"primary",zh:"首要的；最初的"},{en:"critical",zh:"关键性的；批评的"},
+  {en:"vital",zh:"极其重要的"},{en:"conventional",zh:"常规的"},
+  {en:"diverse",zh:"不同的；多种多样的"},{en:"intense",zh:"强烈的，紧张的"},
+  {en:"realistic",zh:"现实的；逼真的"},{en:"sustainable",zh:"可持续的"},
+  {en:"comprehensive",zh:"全面的，综合的"},{en:"indispensable",zh:"不可或缺的"},
+  {en:"profound",zh:"深远的"},{en:"unprecedented",zh:"前所未有的"}
+];
+
+const adverbs = [
+  {en:"presumably",zh:"大概"},{en:"anyhow",zh:"无论如何"},
+  {en:"rarely",zh:"不常，难得"},{en:"nevertheless",zh:"仍然"},
+  {en:"consequently",zh:"所以"},{en:"definitely",zh:"明确地；一定地"},
+  {en:"respectively",zh:"各自地"},{en:"scarcely",zh:"几乎不；绝不"},
+  {en:"readily",zh:"乐意地；容易地"},{en:"necessarily",zh:"必要地；必然地"},
+  {en:"specifically",zh:"特别地；明确地"},{en:"increasingly",zh:"越来越多地"},
+  {en:"barely",zh:"仅仅，几乎不"},{en:"particularly",zh:"特别，尤其"},
+  {en:"thereby",zh:"从而"},{en:"significantly",zh:"显著地"}
+];
+
+// ========== CATEGORY DATA ==========
+const cat = {
+  culture: {
+    core: [
+      {en:"traditional culture",zh:"传统文化"},{en:"cultural heritage",zh:"文化遗产"},
+      {en:"intangible cultural heritage",zh:"非物质文化遗产"},{en:"Confucianism",zh:"儒家思想"},
+      {en:"Taoism",zh:"道家思想"},{en:"Buddhism",zh:"佛教"},
+      {en:"folk custom",zh:"民俗"},{en:"cultural confidence",zh:"文化自信"},
+      {en:"cultural exchange",zh:"文化交流"},{en:"craftsmanship",zh:"手工艺；工匠精神"},
+      {en:"calligraphy",zh:"书法"},{en:"traditional Chinese painting",zh:"国画"},
+      {en:"porcelain / china",zh:"瓷器"},{en:"cuisine",zh:"烹饪，菜肴"},
+      {en:"dynasty",zh:"朝代"},{en:"ancestor",zh:"祖先"},
+      {en:"legend / myth",zh:"传说/神话"},{en:"folk art",zh:"民间艺术"},
+      {en:"ritual",zh:"仪式"},{en:"filial piety",zh:"孝道"},
+      {en:"benevolence / righteousness",zh:"仁/义"},{en:"propriety / wisdom",zh:"礼/智"},
+      {en:"trustworthiness",zh:"信"},{en:"inherit / pass down",zh:"传承"},
+      {en:"symbolize",zh:"象征"},{en:"24 solar terms",zh:"二十四节气"}
+    ],
+    proper: [
+      {en:"Spring Festival",zh:"春节"},{en:"Mid-Autumn Festival",zh:"中秋节"},
+      {en:"Dragon Boat Festival",zh:"端午节"},{en:"Lantern Festival",zh:"元宵节"},
+      {en:"Double Ninth Festival",zh:"重阳节"},{en:"Tomb-Sweeping Day",zh:"清明节"},
+      {en:"New Year's Eve",zh:"除夕"},{en:"red envelope / lucky money",zh:"红包/压岁钱"},
+      {en:"the Great Wall",zh:"长城"},{en:"the Forbidden City",zh:"故宫"},
+      {en:"the Summer Palace",zh:"颐和园"},{en:"Altar of Heaven",zh:"天坛"},
+      {en:"Terracotta Army",zh:"兵马俑"},{en:"Mogao Caves",zh:"敦煌莫高窟"},
+      {en:"Peking Opera",zh:"京剧"},{en:"the Silk Road",zh:"丝绸之路"},
+      {en:"lunar calendar",zh:"农历"},{en:"paper-cutting",zh:"剪纸"},
+      {en:"acupuncture",zh:"针灸"},{en:"Four Great Inventions",zh:"四大发明"},
+      {en:"papermaking / printing",zh:"造纸术/印刷术"},{en:"gunpowder / compass",zh:"火药/指南针"},
+      {en:"Siheyuan (Quadrangle)",zh:"四合院"},{en:"Analects of Confucius",zh:"《论语》"},
+      {en:"A Dream of Red Mansions",zh:"《红楼梦》"},{en:"shadow puppetry",zh:"皮影戏"},
+      {en:"embroidery",zh:"刺绣"},{en:"Tai Chi",zh:"太极拳"},
+      {en:"imperial examination system",zh:"科举制度"},{en:"Tang / Song / Ming / Qing Dynasty",zh:"唐/宋/明/清朝"}
+    ]
+  },
+  politics: {
+    core: [
+      {en:"socialism with Chinese characteristics",zh:"中国特色社会主义"},
+      {en:"reform and opening-up",zh:"改革开放"},
+      {en:"Chinese Dream",zh:"中国梦"},
+      {en:"great rejuvenation of the Chinese nation",zh:"中华民族伟大复兴"},
+      {en:"moderately prosperous society",zh:"小康社会"},
+      {en:"common prosperity",zh:"共同富裕"},
+      {en:"Chinese-style modernization",zh:"中国式现代化"},
+      {en:"high-quality development",zh:"高质量发展"},
+      {en:"peaceful development",zh:"和平发展"},
+      {en:"rule of law",zh:"法治"},{en:"soft power",zh:"软实力"},
+      {en:"core socialist values",zh:"社会主义核心价值观"},
+      {en:"whole-process people's democracy",zh:"全过程人民民主"},
+      {en:"national rejuvenation",zh:"民族复兴"}
+    ],
+    proper: [
+      {en:"the Belt and Road Initiative (BRI)",zh:"\"一带一路\"倡议"},
+      {en:"community with a shared future for mankind",zh:"人类命运共同体"},
+      {en:"new quality productive forces",zh:"新质生产力"},
+      {en:"supply-side structural reform",zh:"供给侧结构性改革"},
+      {en:"the 14th Five-Year Plan",zh:"\"十四五\"规划"},
+      {en:"Chinese path to modernization",zh:"中国式现代化道路"},
+      {en:"20th CPC National Congress",zh:"党的二十大"},
+      {en:"Two Sessions (NPC & CPPCC)",zh:"两会（全国人大和政协）"},
+      {en:"National People's Congress",zh:"全国人民代表大会"},
+      {en:"rural revitalization",zh:"乡村振兴"},
+      {en:"targeted poverty alleviation",zh:"精准扶贫"},
+      {en:"four-pronged comprehensive strategy",zh:"四个全面战略布局"},
+      {en:"global governance",zh:"全球治理"},
+      {en:"poverty elimination",zh:"脱贫攻坚"},
+      {en:"tell China's story well",zh:"讲好中国故事"},
+      {en:"spirit of the craftsman",zh:"工匠精神"}
+    ]
+  },
+  economy: {
+    core: [
+      {en:"economy",zh:"经济"},{en:"economic growth",zh:"经济增长"},
+      {en:"GDP (Gross Domestic Product)",zh:"国内生产总值"},
+      {en:"market economy",zh:"市场经济"},{en:"state-owned enterprise",zh:"国有企业"},
+      {en:"private sector",zh:"私营部门"},{en:"foreign investment",zh:"外商投资"},
+      {en:"trade surplus / deficit",zh:"贸易顺差/逆差"},{en:"consumption",zh:"消费"},
+      {en:"urbanization",zh:"城镇化"},{en:"infrastructure",zh:"基础设施"},
+      {en:"manufacturing",zh:"制造业"},{en:"e-commerce",zh:"电子商务"},
+      {en:"standard of living",zh:"生活水平"},{en:"purchasing power",zh:"购买力"},
+      {en:"supply chain",zh:"供应链"},{en:"stock market",zh:"股票市场"},
+      {en:"inflation",zh:"通货膨胀"},{en:"sustainable development",zh:"可持续发展"},
+      {en:"prosperity",zh:"繁荣"},{en:"macroeconomic regulation",zh:"宏观调控"},
+      {en:"industrial upgrading",zh:"产业升级"},{en:"consumption upgrading",zh:"消费升级"}
+    ],
+    proper: [
+      {en:"digital economy",zh:"数字经济"},{en:"platform economy",zh:"平台经济"},
+      {en:"well-off society",zh:"小康社会"},{en:"common prosperity",zh:"共同富裕"},
+      {en:"World Trade Organization (WTO)",zh:"世界贸易组织"},
+      {en:"Fortune Global 500",zh:"世界500强"},
+      {en:"special economic zone",zh:"经济特区"},
+      {en:"free trade zone",zh:"自由贸易区"},
+      {en:"cross-border e-commerce",zh:"跨境电商"},
+      {en:"sharing economy",zh:"共享经济"},
+      {en:"RCEP (Regional Comprehensive Economic Partnership)",zh:"区域全面经济伙伴关系协定"},
+      {en:"domestic dual circulation",zh:"国内国际双循环"}
+    ]
+  },
+  society: {
+    core: [
+      {en:"society",zh:"社会"},{en:"population",zh:"人口"},
+      {en:"aging population",zh:"人口老龄化"},{en:"social security",zh:"社会保障"},
+      {en:"welfare system",zh:"福利制度"},{en:"employment",zh:"就业"},
+      {en:"income gap",zh:"收入差距"},{en:"public service",zh:"公共服务"},
+      {en:"healthcare reform",zh:"医疗改革"},{en:"housing price",zh:"房价"},
+      {en:"migrant worker",zh:"农民工"},{en:"middle class",zh:"中产阶级"},
+      {en:"rural area",zh:"农村地区"},{en:"livelihood",zh:"民生"},
+      {en:"gender equality",zh:"性别平等"},{en:"social mobility",zh:"社会流动性"},
+      {en:"charity",zh:"慈善"},{en:"community",zh:"社区"},
+      {en:"harmonious society",zh:"和谐社会"},{en:"social harmony",zh:"社会和谐"},
+      {en:"urban-rural gap",zh:"城乡差距"},{en:"food safety",zh:"食品安全"},
+      {en:"public health system",zh:"公共卫生体系"},{en:"social governance",zh:"社会治理"}
+    ],
+    proper: [
+      {en:"targeted poverty alleviation",zh:"精准扶贫"},
+      {en:"rural revitalization",zh:"乡村振兴"},
+      {en:"three-child policy",zh:"三孩政策"},
+      {en:"hukou system",zh:"户籍制度"},
+      {en:"poverty line",zh:"贫困线"},
+      {en:"new urbanization",zh:"新型城镇化"},
+      {en:"social credit system",zh:"社会信用体系"},
+      {en:"double reduction policy",zh:"双减政策"},
+      {en:"common prosperity",zh:"共同富裕"},
+      {en:"aging society",zh:"老龄化社会"},
+      {en:"empty-nest elderly",zh:"空巢老人"}
+    ]
+  },
+  education: {
+    core: [
+      {en:"education",zh:"教育"},{en:"compulsory education",zh:"义务教育"},
+      {en:"higher education",zh:"高等教育"},{en:"vocational education",zh:"职业教育"},
+      {en:"exam-oriented education",zh:"应试教育"},{en:"quality-oriented education",zh:"素质教育"},
+      {en:"curriculum",zh:"课程"},{en:"academic degree",zh:"学位"},
+      {en:"scholarship",zh:"奖学金"},{en:"campus",zh:"校园"},
+      {en:"enrollment",zh:"招生，入学"},{en:"literacy rate",zh:"识字率"},
+      {en:"lifelong learning",zh:"终身学习"},{en:"critical thinking",zh:"批判性思维"},
+      {en:"innovation",zh:"创新"},{en:"overseas study / study abroad",zh:"留学"},
+      {en:"public / private school",zh:"公立/私立学校"},
+      {en:"online education",zh:"在线教育"},{en:"academic performance",zh:"学业成绩"},
+      {en:"well-rounded education",zh:"全面发展教育"},{en:"cultural confidence",zh:"文化自信"},
+      {en:"international exchange",zh:"国际交流"},{en:"cross-cultural communication",zh:"跨文化沟通"}
+    ],
+    proper: [
+      {en:"Gaokao (college entrance exam)",zh:"高考"},
+      {en:"nine-year compulsory education",zh:"九年义务教育"},
+      {en:"Double First-Class Initiative",zh:"双一流建设"},
+      {en:"985/211 Project universities",zh:"985/211工程大学"},
+      {en:"CET-4 / CET-6",zh:"大学英语四/六级"},
+      {en:"TOEFL / IELTS",zh:"托福 / 雅思"},
+      {en:"Confucius Institute",zh:"孔子学院"},
+      {en:"STEM education",zh:"STEM教育"},
+      {en:"MOOC (Massive Open Online Courses)",zh:"慕课（大型开放在线课程）"},
+      {en:"remote education",zh:"远程教育"}
+    ]
+  },
+  technology: {
+    core: [
+      {en:"technology",zh:"技术"},{en:"innovation",zh:"创新"},
+      {en:"automation",zh:"自动化"},{en:"digital",zh:"数字的"},
+      {en:"internet",zh:"互联网"},{en:"smartphone",zh:"智能手机"},
+      {en:"satellite",zh:"卫星"},{en:"robot",zh:"机器人"},
+      {en:"patent",zh:"专利"},{en:"breakthrough",zh:"突破"},
+      {en:"R&D (research and development)",zh:"研发"},{en:"information technology (IT)",zh:"信息技术"},
+      {en:"quantum computing",zh:"量子计算"},{en:"chip / semiconductor",zh:"芯片/半导体"},
+      {en:"algorithm",zh:"算法"},{en:"data privacy",zh:"数据隐私"},
+      {en:"blockchain",zh:"区块链"},{en:"cybersecurity",zh:"网络安全"},
+      {en:"genetic engineering",zh:"基因工程"},{en:"5G communications",zh:"5G通信"}
+    ],
+    proper: [
+      {en:"artificial intelligence (AI)",zh:"人工智能"},
+      {en:"high-speed rail (HSR)",zh:"高铁"},
+      {en:"big data",zh:"大数据"},
+      {en:"cloud computing",zh:"云计算"},
+      {en:"mobile payment",zh:"移动支付"},
+      {en:"Beidou Navigation System",zh:"北斗导航系统"},
+      {en:"Chang'e lunar probe",zh:"嫦娥月球探测器"},
+      {en:"Tiangong space station",zh:"天宫空间站"},
+      {en:"Internet of Things (IoT)",zh:"物联网"},
+      {en:"facial recognition",zh:"人脸识别"},
+      {en:"autonomous driving",zh:"自动驾驶"},
+      {en:"Shenzhou spacecraft",zh:"神舟飞船"}
+    ],
+    ai: [
+      {en:"large language model (LLM)",zh:"大语言模型"},
+      {en:"ChatGPT",zh:"聊天生成预训练变换器"},
+      {en:"deep learning",zh:"深度学习"},
+      {en:"machine learning",zh:"机器学习"},
+      {en:"metaverse",zh:"元宇宙"},
+      {en:"virtual reality (VR)",zh:"虚拟现实"},
+      {en:"augmented reality (AR)",zh:"增强现实"},
+      {en:"immersive experience",zh:"沉浸式体验"},
+      {en:"short video platforms",zh:"短视频平台"},
+      {en:"livestreaming e-commerce",zh:"直播带货"},
+      {en:"social media",zh:"社交媒体"},
+      {en:"digitalization",zh:"数字化"},
+      {en:"cryptocurrency",zh:"加密货币"},
+      {en:"algorithm recommendation",zh:"算法推荐"},
+      {en:"data security",zh:"数据安全"},
+      {en:"digital divide",zh:"数字鸿沟"}
+    ]
+  },
+  ecology: {
+    core: [
+      {en:"environment",zh:"环境"},{en:"ecology",zh:"生态"},
+      {en:"climate change",zh:"气候变化"},{en:"global warming",zh:"全球变暖"},
+      {en:"carbon emission",zh:"碳排放"},{en:"renewable energy",zh:"可再生能源"},
+      {en:"pollution",zh:"污染"},{en:"air quality",zh:"空气质量"},
+      {en:"smog / haze",zh:"雾霾"},{en:"deforestation",zh:"森林砍伐"},
+      {en:"biodiversity",zh:"生物多样性"},{en:"endangered species",zh:"濒危物种"},
+      {en:"environmental protection",zh:"环境保护"},{en:"sustainable development",zh:"可持续发展"},
+      {en:"green development",zh:"绿色发展"},{en:"waste sorting / garbage classification",zh:"垃圾分类"},
+      {en:"low-carbon lifestyle",zh:"低碳生活"},{en:"afforestation",zh:"植树造林"},
+      {en:"ecosystem",zh:"生态系统"},{en:"natural reserve",zh:"自然保护区"},
+      {en:"clean energy",zh:"清洁能源"},{en:"water conservation",zh:"节约用水"},
+      {en:"desertification",zh:"荒漠化"},{en:"circular economy",zh:"循环经济"},
+      {en:"energy conservation and emission reduction",zh:"节能减排"}
+    ],
+    proper: [
+      {en:"carbon neutrality",zh:"碳中和"},
+      {en:"carbon peak",zh:"碳达峰"},
+      {en:"Paris Agreement",zh:"《巴黎协定》"},
+      {en:"ecological civilization",zh:"生态文明"},
+      {en:"lucid waters and lush mountains",zh:"绿水青山"},
+      {en:"invaluable assets",zh:"金山银山"},
+      {en:"Three-North Shelterbelt",zh:"三北防护林"},
+      {en:"Yangtze River Protection Law",zh:"长江保护法"},
+      {en:"United Nations Climate Change Conference (COP)",zh:"联合国气候变化大会"},
+      {en:"carbon trading / carbon market",zh:"碳交易/碳市场"},
+      {en:"PM2.5",zh:"细颗粒物"},
+      {en:"green building",zh:"绿色建筑"},
+      {en:"white pollution",zh:"白色污染"}
+    ],
+    carbon: [
+      {en:"carbon peak by 2030",zh:"2030年前碳达峰"},
+      {en:"carbon neutrality by 2060",zh:"2060年前碳中和"},
+      {en:"new energy vehicle (NEV)",zh:"新能源汽车"},
+      {en:"electric vehicle (EV)",zh:"电动汽车"},
+      {en:"charging pile / station",zh:"充电桩/充电站"},
+      {en:"solar energy / photovoltaic (PV)",zh:"太阳能/光伏"},
+      {en:"wind power",zh:"风能"},
+      {en:"hydropower",zh:"水电"},
+      {en:"hydrogen energy",zh:"氢能"},
+      {en:"energy storage",zh:"储能"},
+      {en:"offshore wind farm",zh:"海上风电场"},
+      {en:"energy mix / energy structure",zh:"能源结构"},
+      {en:"green transition",zh:"绿色转型"},
+      {en:"carbon footprint",zh:"碳足迹"},
+      {en:"net-zero emissions",zh:"净零排放"},
+      {en:"dual carbon goals",zh:"双碳目标"}
+    ]
+  }
+};
+
+function renderWordGrid(id, arr, cls) {
+  document.getElementById(id).innerHTML = arr.map((w,i) =>
+    `<div class="word-card ${cls}"><div class="idx">${i+1}</div><div class="en">${w.en}</div><div class="zh">${w.zh}</div></div>`
+  ).join('');
+}
+function renderTags(id, arr, extra) {
+  document.getElementById(id).innerHTML = arr.map(t =>
+    `<div class="tag${extra||''}"><span class="en">${t.en}</span><span class="zh">${t.zh}</span></div>`
+  ).join('');
+}
+
+document.querySelectorAll('.nav button').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.nav button').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    document.getElementById(b.dataset.tab).classList.add('active');
+  });
+});
+
+renderWordGrid('verb-grid', verbs, 'verb');
+renderWordGrid('noun-grid', nouns, 'noun');
+renderWordGrid('adj-grid', adjectives, 'adj');
+renderWordGrid('adv-grid', adverbs, 'adv');
+
+renderTags('culture-core', cat.culture.core);
+renderTags('culture-proper', cat.culture.proper, ' proper');
+renderTags('politics-core', cat.politics.core);
+renderTags('politics-proper', cat.politics.proper, ' proper');
+renderTags('economy-core', cat.economy.core);
+renderTags('economy-proper', cat.economy.proper, ' proper');
+renderTags('society-core', cat.society.core);
+renderTags('society-proper', cat.society.proper, ' proper');
+renderTags('education-core', cat.education.core);
+renderTags('education-proper', cat.education.proper, ' proper');
+renderTags('technology-core', cat.technology.core);
+renderTags('technology-proper', cat.technology.proper, ' proper');
+renderTags('technology-ai', cat.technology.ai, ' hot');
+renderTags('ecology-core', cat.ecology.core);
+renderTags('ecology-proper', cat.ecology.proper, ' proper');
+renderTags('ecology-carbon', cat.ecology.carbon, ' hot');
+</script>
+</body>
+</html>
